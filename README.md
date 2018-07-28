@@ -1,11 +1,11 @@
-# Class Migrator Application
+# Migrator Application
 
-Allow to define XClass migrations.
+Allow to define migrations at the extension level.
 
 * Project Leads:
   * [Clément Aubin](http://www.xwiki.org/xwiki/bin/view/XWiki/caubin)
 * Documentation & Download: N/A
-* [Issue Tracker](http://jira.xwiki.org/browse/CLASSMIG)
+* [Issue Tracker](http://jira.xwiki.org/browse/MIGRATOR)
 * Communication: [Mailing List](http://dev.xwiki.org/xwiki/bin/view/Community/MailingLists), [IRC](http://dev.xwiki.org/xwiki/bin/view/Community/IRC)
 * [Development Practices](http://dev.xwiki.org)
 * Minimal XWiki version supported: XWiki 9.11
