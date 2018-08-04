@@ -43,9 +43,18 @@ public interface MigrationHistoryStore
      * Get a set of applied migrations represented by their UUID
      * ({@link AbstractMigrationDescriptor#getMigrationUUID()}).
      *
-     * @param extensionId the extension and its version
+     * @param extensionId the extension and its version. If the version of the extension is not given,
+     * then the result will be an empty set.
      * @return a set of applied migrations for the corresponding version of the extension
      * @throws MigrationException if an error happens
      */
     Set<UUID> getAppliedMigrationsForVersion(ExtensionId extensionId) throws MigrationException;
+
+    /**
+     * Declare a new migration applied on the wiki.
+     *
+     * @param migrationDescriptor the migration descriptor that has been used
+     * @throws MigrationException if an error happens
+     */
+    void addAppliedMigration(AbstractMigrationDescriptor migrationDescriptor) throws MigrationException;
 }

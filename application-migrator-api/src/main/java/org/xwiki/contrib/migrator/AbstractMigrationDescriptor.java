@@ -37,24 +37,24 @@ public abstract class AbstractMigrationDescriptor
     /**
      * @return the extension ID for which this migration applies to
      */
-    abstract ExtensionId getExtensionId();
+    public abstract ExtensionId getExtensionId();
 
     /**
      * @return the name of the migration
      */
-    abstract String getMigrationName();
+    public abstract String getMigrationName();
 
     /**
      * @return the description of the migration
      */
-    abstract String getMigrationDescription();
+    public abstract String getMigrationDescription();
 
     /**
      * @return the UUID of the current migration
      */
     public final UUID getMigrationUUID()
     {
-        return UUID.fromString(String.format("%s-%s-%s-%s", getExtensionId(),
-                getMigrationName(), getMigrationDescription(), hashCode()));
+        return UUID.nameUUIDFromBytes(String.format("%s-%s-%s-%s", getExtensionId(),
+                getMigrationName(), getMigrationDescription(), hashCode()).getBytes());
     }
 }
