@@ -1,0 +1,4 @@
+org.xwiki.contrib.migrator.internal.DefaultMigrationManager
+org.xwiki.contrib.migrator.internal.job.DefaultBulkMigrationJob
+org.xwiki.contrib.migrator.internal.job.DefaultMigrationJob
+org.xwiki.contrib.migrator.internal.UpgradedExtensionEventListener

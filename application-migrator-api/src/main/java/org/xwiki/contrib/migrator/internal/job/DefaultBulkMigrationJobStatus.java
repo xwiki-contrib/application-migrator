@@ -17,24 +17,30 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.contrib.migrator.job;
+package org.xwiki.contrib.migrator.internal.job;
+
+import java.util.Map;
+import java.util.UUID;
 
 import org.xwiki.contrib.migrator.MigrationStatus;
-import org.xwiki.job.DefaultJobStatus;
+import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobRequest;
+import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobStatus;
 import org.xwiki.job.event.status.JobStatus;
 import org.xwiki.logging.LoggerManager;
 import org.xwiki.observation.ObservationManager;
 
 /**
- * Define a migration job status.
+ * This is the default implementation of {@link AbstractBulkMigrationJobStatus}.
  *
  * @version $Id$
  * @since 1.0
  */
-public abstract class AbstractMigrationJobStatus extends DefaultJobStatus<AbstractMigrationJobRequest>
+public class DefaultBulkMigrationJobStatus extends AbstractBulkMigrationJobStatus
 {
+    private Map<UUID, MigrationStatus> migrationStatuses;
+
     /**
-     * Builds a new {@link AbstractMigrationJobStatus}.
+     * Builds a new {@link AbstractBulkMigrationJobStatus}.
      *
      * @param jobType the type of the job
      * @param request the job request
@@ -42,25 +48,23 @@ public abstract class AbstractMigrationJobStatus extends DefaultJobStatus<Abstra
      * @param observationManager the observation manager
      * @param loggerManager the logger manager
      */
-    public AbstractMigrationJobStatus(
-            String jobType,
-            AbstractMigrationJobRequest request,
+    public DefaultBulkMigrationJobStatus(String jobType,
+            AbstractBulkMigrationJobRequest request,
             JobStatus parentJobStatus,
-            ObservationManager observationManager,
-            LoggerManager loggerManager)
+            ObservationManager observationManager, LoggerManager loggerManager)
     {
         super(jobType, request, parentJobStatus, observationManager, loggerManager);
     }
 
-    /**
-     * Define the migration status returned by the migration executor.
-     *
-     * @param migrationStatus the migration status
-     */
-    public abstract void setMigrationStatus(MigrationStatus migrationStatus);
+    @Override
+    public void setMigrationStatuses(Map<UUID, MigrationStatus> migrationStatuses)
+    {
+        this.migrationStatuses = migrationStatuses;
+    }
 
-    /**
-     * @return the status of the migration returned by the executor.
-     */
-    public abstract MigrationStatus getMigrationStatus();
+    @Override
+    public Map<UUID, MigrationStatus> getMigrationStatuses()
+    {
+        return migrationStatuses;
+    }
 }

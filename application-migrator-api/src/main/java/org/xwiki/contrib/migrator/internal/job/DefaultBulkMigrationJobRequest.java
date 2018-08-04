@@ -17,29 +17,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.contrib.migrator.job;
+package org.xwiki.contrib.migrator.internal.job;
+
+import java.util.Set;
 
 import org.xwiki.contrib.migrator.AbstractMigrationDescriptor;
-import org.xwiki.job.AbstractRequest;
+import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobRequest;
+import org.xwiki.contrib.migrator.job.AbstractMigrationJobRequest;
 
 /**
- * Define a migration job request.
+ * This is the default implementation of {@link AbstractMigrationJobRequest}.
  *
  * @version $Id$
  * @since 1.0
  */
-public abstract class AbstractMigrationJobRequest extends AbstractRequest
+public class DefaultBulkMigrationJobRequest extends AbstractBulkMigrationJobRequest
 {
-    /**
-     * Define the migration descriptor that will be used in this job. The migration descriptor will contain all
-     * the information needed for the migration.
-     *
-     * @param migrationDescriptor the descriptor
-     */
-    public abstract void setMigrationDescriptor(AbstractMigrationDescriptor migrationDescriptor);
+    private Set<AbstractMigrationDescriptor> migrationDescriptors;
 
-    /**
-     * @return the migration descriptor registered through {@link #setMigrationDescriptor(AbstractMigrationDescriptor)}
-     */
-    public abstract AbstractMigrationDescriptor getMigrationDescriptor();
+    @Override
+    public void setMigrationDescriptors(Set<AbstractMigrationDescriptor> migrationDescriptors)
+    {
+        this.migrationDescriptors = migrationDescriptors;
+    }
+
+    @Override
+    public Set<AbstractMigrationDescriptor> getMigrationDescriptors()
+    {
+        return migrationDescriptors;
+    }
 }

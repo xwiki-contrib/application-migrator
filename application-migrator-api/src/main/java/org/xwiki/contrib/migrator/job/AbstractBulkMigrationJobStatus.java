@@ -19,6 +19,9 @@
  */
 package org.xwiki.contrib.migrator.job;
 
+import java.util.Map;
+import java.util.UUID;
+
 import org.xwiki.contrib.migrator.MigrationStatus;
 import org.xwiki.job.DefaultJobStatus;
 import org.xwiki.job.event.status.JobStatus;
@@ -26,15 +29,15 @@ import org.xwiki.logging.LoggerManager;
 import org.xwiki.observation.ObservationManager;
 
 /**
- * Define a migration job status.
+ * Define the job status used for {@link AbstractBulkMigrationJob}.
  *
  * @version $Id$
  * @since 1.0
  */
-public abstract class AbstractMigrationJobStatus extends DefaultJobStatus<AbstractMigrationJobRequest>
+public abstract class AbstractBulkMigrationJobStatus extends DefaultJobStatus<AbstractBulkMigrationJobRequest>
 {
     /**
-     * Builds a new {@link AbstractMigrationJobStatus}.
+     * Builds a new {@link AbstractBulkMigrationJobStatus}.
      *
      * @param jobType the type of the job
      * @param request the job request
@@ -42,9 +45,9 @@ public abstract class AbstractMigrationJobStatus extends DefaultJobStatus<Abstra
      * @param observationManager the observation manager
      * @param loggerManager the logger manager
      */
-    public AbstractMigrationJobStatus(
+    public AbstractBulkMigrationJobStatus(
             String jobType,
-            AbstractMigrationJobRequest request,
+            AbstractBulkMigrationJobRequest request,
             JobStatus parentJobStatus,
             ObservationManager observationManager,
             LoggerManager loggerManager)
@@ -53,14 +56,15 @@ public abstract class AbstractMigrationJobStatus extends DefaultJobStatus<Abstra
     }
 
     /**
-     * Define the migration status returned by the migration executor.
+     * Define the migration statuses that are returned by the migration executors.
      *
-     * @param migrationStatus the migration status
+     * @param migrationStatuses the migration statuses
      */
-    public abstract void setMigrationStatus(MigrationStatus migrationStatus);
+    public abstract void setMigrationStatuses(Map<UUID, MigrationStatus> migrationStatuses);
 
     /**
-     * @return the status of the migration returned by the executor.
+     * @return a map containing, for each migration performed (identified by its UUID), the status returned by
+     * the migration executor.
      */
-    public abstract MigrationStatus getMigrationStatus();
+    public abstract Map<UUID, MigrationStatus> getMigrationStatuses();
 }

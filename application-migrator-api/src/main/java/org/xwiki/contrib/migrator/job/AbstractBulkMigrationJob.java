@@ -19,27 +19,27 @@
  */
 package org.xwiki.contrib.migrator.job;
 
-import org.xwiki.contrib.migrator.AbstractMigrationDescriptor;
-import org.xwiki.job.AbstractRequest;
+import org.xwiki.job.AbstractJob;
 
 /**
- * Define a migration job request.
+ * Define a bulk migration job.
+ *
+ * A bulk migration job will run multiple migrations at once, though nested {@link AbstractMigrationJob}.
  *
  * @version $Id$
  * @since 1.0
  */
-public abstract class AbstractMigrationJobRequest extends AbstractRequest
+public abstract class AbstractBulkMigrationJob
+        extends AbstractJob<AbstractBulkMigrationJobRequest, AbstractBulkMigrationJobStatus>
 {
     /**
-     * Define the migration descriptor that will be used in this job. The migration descriptor will contain all
-     * the information needed for the migration.
-     *
-     * @param migrationDescriptor the descriptor
+     * The type of the job ; also used as a job identifier.
      */
-    public abstract void setMigrationDescriptor(AbstractMigrationDescriptor migrationDescriptor);
+    public static final String JOB_TYPE = "bulkMigrationJob";
 
-    /**
-     * @return the migration descriptor registered through {@link #setMigrationDescriptor(AbstractMigrationDescriptor)}
-     */
-    public abstract AbstractMigrationDescriptor getMigrationDescriptor();
+    @Override
+    public final String getType()
+    {
+        return JOB_TYPE;
+    }
 }

@@ -17,22 +17,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.contrib.migrator.job;
+package org.xwiki.contrib.migrator.internal.job;
 
 import org.xwiki.contrib.migrator.MigrationStatus;
-import org.xwiki.job.DefaultJobStatus;
+import org.xwiki.contrib.migrator.job.AbstractMigrationJobRequest;
+import org.xwiki.contrib.migrator.job.AbstractMigrationJobStatus;
 import org.xwiki.job.event.status.JobStatus;
 import org.xwiki.logging.LoggerManager;
 import org.xwiki.observation.ObservationManager;
 
 /**
- * Define a migration job status.
+ * This is the default implementation of {@link AbstractMigrationJobStatus}.
  *
  * @version $Id$
  * @since 1.0
  */
-public abstract class AbstractMigrationJobStatus extends DefaultJobStatus<AbstractMigrationJobRequest>
+public class DefaultMigrationJobStatus extends AbstractMigrationJobStatus
 {
+    private MigrationStatus migrationStatus;
+
     /**
      * Builds a new {@link AbstractMigrationJobStatus}.
      *
@@ -42,25 +45,22 @@ public abstract class AbstractMigrationJobStatus extends DefaultJobStatus<Abstra
      * @param observationManager the observation manager
      * @param loggerManager the logger manager
      */
-    public AbstractMigrationJobStatus(
-            String jobType,
-            AbstractMigrationJobRequest request,
+    public DefaultMigrationJobStatus(String jobType, AbstractMigrationJobRequest request,
             JobStatus parentJobStatus,
-            ObservationManager observationManager,
-            LoggerManager loggerManager)
+            ObservationManager observationManager, LoggerManager loggerManager)
     {
         super(jobType, request, parentJobStatus, observationManager, loggerManager);
     }
 
-    /**
-     * Define the migration status returned by the migration executor.
-     *
-     * @param migrationStatus the migration status
-     */
-    public abstract void setMigrationStatus(MigrationStatus migrationStatus);
+    @Override
+    public void setMigrationStatus(MigrationStatus migrationStatus)
+    {
+        this.migrationStatus = migrationStatus;
+    }
 
-    /**
-     * @return the status of the migration returned by the executor.
-     */
-    public abstract MigrationStatus getMigrationStatus();
+    @Override
+    public MigrationStatus getMigrationStatus()
+    {
+        return migrationStatus;
+    }
 }

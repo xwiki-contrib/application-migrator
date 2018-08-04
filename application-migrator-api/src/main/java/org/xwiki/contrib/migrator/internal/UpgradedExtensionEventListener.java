@@ -17,29 +17,43 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.xwiki.contrib.migrator.job;
+package org.xwiki.contrib.migrator.internal;
 
-import org.xwiki.contrib.migrator.AbstractMigrationDescriptor;
-import org.xwiki.job.AbstractRequest;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.xwiki.component.annotation.Component;
+import org.xwiki.extension.event.ExtensionUpgradedEvent;
+import org.xwiki.observation.AbstractEventListener;
+import org.xwiki.observation.event.Event;
 
 /**
- * Define a migration job request.
+ * This listener aims to trigger an eventual XClass migration during an extension upgrade.
  *
  * @version $Id$
  * @since 1.0
  */
-public abstract class AbstractMigrationJobRequest extends AbstractRequest
+@Component
+@Singleton
+@Named(UpgradedExtensionEventListener.LISTENER_NAME)
+public class UpgradedExtensionEventListener extends AbstractEventListener
 {
     /**
-     * Define the migration descriptor that will be used in this job. The migration descriptor will contain all
-     * the information needed for the migration.
-     *
-     * @param migrationDescriptor the descriptor
+     * The listener name.
      */
-    public abstract void setMigrationDescriptor(AbstractMigrationDescriptor migrationDescriptor);
+    public static final String LISTENER_NAME = "UpgradedExtensionEventListener";
 
     /**
-     * @return the migration descriptor registered through {@link #setMigrationDescriptor(AbstractMigrationDescriptor)}
+     * Build a new {@link UpgradedExtensionEventListener}.
      */
-    public abstract AbstractMigrationDescriptor getMigrationDescriptor();
+    public UpgradedExtensionEventListener()
+    {
+        super(LISTENER_NAME, new ExtensionUpgradedEvent());
+    }
+
+    @Override
+    public void onEvent(Event event, Object source, Object data)
+    {
+
+    }
 }

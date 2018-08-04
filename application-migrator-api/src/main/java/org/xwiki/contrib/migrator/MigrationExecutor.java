@@ -25,11 +25,11 @@ package org.xwiki.contrib.migrator;
  * A migration executor is called for actually executing the currently running migration. It will handle
  * the extraction of the information needed to perform the migration from the {@link AbstractMigrationDescriptor}.
  *
- * @param <D> the type of migration descriptor handled
+ * @param <T> the type of migration descriptor handled
  * @version $Id$
  * @since 1.0
  */
-public interface MigrationExecutor<D extends AbstractMigrationDescriptor>
+public interface MigrationExecutor<T extends AbstractMigrationDescriptor>
 {
     /**
      * Run the actual migration.
@@ -38,5 +38,5 @@ public interface MigrationExecutor<D extends AbstractMigrationDescriptor>
      * @throws MigrationException if an error happens
      * @return the status of the current migration
      */
-    MigrationStatus execute(D migrationDescriptor) throws MigrationException;
+    MigrationStatus execute(T migrationDescriptor) throws MigrationException;
 }

@@ -33,5 +33,14 @@ import org.xwiki.job.AbstractJob;
  */
 public abstract class AbstractMigrationJob extends AbstractJob<AbstractMigrationJobRequest, AbstractMigrationJobStatus>
 {
+    /**
+     * The type of the job ; also used as a job identifier.
+     */
+    public static final String JOB_TYPE = "migrationJob";
 
+    @Override
+    public final String getType()
+    {
+        return JOB_TYPE;
+    }
 }

@@ -19,27 +19,28 @@
  */
 package org.xwiki.contrib.migrator.job;
 
+import java.util.Set;
+
 import org.xwiki.contrib.migrator.AbstractMigrationDescriptor;
 import org.xwiki.job.AbstractRequest;
 
 /**
- * Define a migration job request.
+ * Define a job request used for {@link AbstractBulkMigrationJob}.
  *
  * @version $Id$
  * @since 1.0
  */
-public abstract class AbstractMigrationJobRequest extends AbstractRequest
+public abstract class AbstractBulkMigrationJobRequest extends AbstractRequest
 {
     /**
-     * Define the migration descriptor that will be used in this job. The migration descriptor will contain all
-     * the information needed for the migration.
+     * Define a set of migration descriptors that will be executed one by one.
      *
-     * @param migrationDescriptor the descriptor
+     * @param migrationDescriptors the migrations to execute
      */
-    public abstract void setMigrationDescriptor(AbstractMigrationDescriptor migrationDescriptor);
+    public abstract void setMigrationDescriptors(Set<AbstractMigrationDescriptor> migrationDescriptors);
 
     /**
-     * @return the migration descriptor registered through {@link #setMigrationDescriptor(AbstractMigrationDescriptor)}
+     * @return the migration descriptors registered through {@link #setMigrationDescriptors(Set)}}
      */
-    public abstract AbstractMigrationDescriptor getMigrationDescriptor();
+    public abstract Set<AbstractMigrationDescriptor> getMigrationDescriptors();
 }
