@@ -12,5 +12,4 @@ Allow to define migrations at the extension level.
 * License: LGPL 2.1
 * Translations: N/A
 * Sonar Dashboard: N/A
-* Continuous Integration Status: [![Build Status](http://ci.xwiki.org/job/XWiki%20Contrib/job/application-class-migrator/job/master/badge/icon)](http://ci.xwiki.org/job/XWiki%20Contrib/job/application-class-migrator/job/master/)
-
+* Continuous Integration Status: [![Build Status](https://ci.xwiki.org/view/Contrib/job/XWiki%20Contrib/job/application-migrator/job/master/badge/icon)](https://ci.xwiki.org/view/Contrib/job/XWiki%20Contrib/job/application-migrator/job/master/)
