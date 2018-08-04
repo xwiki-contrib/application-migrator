@@ -22,7 +22,7 @@ package org.xwiki.contrib.migrator;
 import java.util.Set;
 
 import org.xwiki.component.annotation.Role;
-import org.xwiki.extension.Extension;
+import org.xwiki.extension.ExtensionId;
 
 /**
  * This is the central manager for migrations.
@@ -37,15 +37,17 @@ public interface MigrationManager
      * Verifies if the given extension has one or more pending migrations.
      *
      * @param extension the extension that should be used
+     * @throws MigrationException if an error happens
      * @return true if at least one migration is available
      */
-    boolean hasAvailableMigration(Extension extension);
+    boolean hasAvailableMigration(ExtensionId extension) throws MigrationException;
 
     /**
      * Get a set of the available migrations.
      *
      * @param extension the extension to look for
+     * @throws MigrationException if an error happens
      * @return the available migrations
      */
-    Set<AbstractMigrationDescriptor> getMigrations(Extension extension);
+    Set<AbstractMigrationDescriptor> getMigrations(ExtensionId extension) throws MigrationException;
 }

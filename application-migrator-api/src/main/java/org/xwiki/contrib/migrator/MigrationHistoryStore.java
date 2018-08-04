@@ -19,42 +19,33 @@
  */
 package org.xwiki.contrib.migrator;
 
+import java.util.Set;
 import java.util.UUID;
 
+import org.xwiki.component.annotation.Role;
 import org.xwiki.extension.ExtensionId;
 
 /**
- * Define a migration.
+ * A migration history store is a component that allows to store the status of the migrations applied to the
+ * platform extensions.
  *
- * A migration should be related to a specific extension and extension version, it describes the migration itself
- * (actions taken, when should the migration occur, …).
+ * The goal of the store is only to help defining whether a migration has been executed or not. For each version
+ * of an extension, we use the hashCode of a MigrationDescriptor provided by this version in order uniquely
+ * identify the migration.
  *
  * @version $Id$
  * @since 1.0
  */
-public abstract class AbstractMigrationDescriptor
+@Role
+public interface MigrationHistoryStore
 {
     /**
-     * @return the extension ID for which this migration applies to
+     * Get a set of applied migrations represented by their UUID
+     * ({@link AbstractMigrationDescriptor#getMigrationUUID()}).
+     *
+     * @param extensionId the extension and its version
+     * @return a set of applied migrations for the corresponding version of the extension
+     * @throws MigrationException if an error happens
      */
-    abstract ExtensionId getExtensionId();
-
-    /**
-     * @return the name of the migration
-     */
-    abstract String getMigrationName();
-
-    /**
-     * @return the description of the migration
-     */
-    abstract String getMigrationDescription();
-
-    /**
-     * @return the UUID of the current migration
-     */
-    public final UUID getMigrationUUID()
-    {
-        return UUID.fromString(String.format("%s-%s-%s-%s", getExtensionId(),
-                getMigrationName(), getMigrationDescription(), hashCode()));
-    }
+    Set<UUID> getAppliedMigrationsForVersion(ExtensionId extensionId) throws MigrationException;
 }

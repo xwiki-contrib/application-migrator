@@ -37,7 +37,8 @@ public interface MigrationDescriptorProvider
      * For the given extension ID, get a set of migration descriptors that are waiting to be applied.
      *
      * @param extensionId the extension that should be used
+     * @throws MigrationException if an error happens
      * @return a set of migration descriptors
      */
-    Set<AbstractMigrationDescriptor> getMigrations(ExtensionId extensionId);
+    Set<AbstractMigrationDescriptor> getMigrations(ExtensionId extensionId) throws MigrationException;
 }

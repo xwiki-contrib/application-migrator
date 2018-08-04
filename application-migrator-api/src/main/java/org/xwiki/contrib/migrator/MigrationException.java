@@ -19,42 +19,31 @@
  */
 package org.xwiki.contrib.migrator;
 
-import java.util.UUID;
-
-import org.xwiki.extension.ExtensionId;
-
 /**
- * Define a migration.
- *
- * A migration should be related to a specific extension and extension version, it describes the migration itself
- * (actions taken, when should the migration occur, …).
+ * Exception specific to the migration module.
  *
  * @version $Id$
  * @since 1.0
  */
-public abstract class AbstractMigrationDescriptor
+public class MigrationException extends Exception
 {
     /**
-     * @return the extension ID for which this migration applies to
+     * Construct a MigrationException.
+     * @param message the detail message
      */
-    abstract ExtensionId getExtensionId();
-
-    /**
-     * @return the name of the migration
-     */
-    abstract String getMigrationName();
-
-    /**
-     * @return the description of the migration
-     */
-    abstract String getMigrationDescription();
-
-    /**
-     * @return the UUID of the current migration
-     */
-    public final UUID getMigrationUUID()
+    public MigrationException(String message)
     {
-        return UUID.fromString(String.format("%s-%s-%s-%s", getExtensionId(),
-                getMigrationName(), getMigrationDescription(), hashCode()));
+        super(message);
+    }
+
+    /**
+     * Construct a MigrationException.
+     * @param message the detail message
+     * @param cause the cause
+     */
+    public MigrationException(String message, Throwable cause)
+    {
+        super(message, cause);
     }
 }
+

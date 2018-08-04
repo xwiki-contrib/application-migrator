@@ -35,7 +35,8 @@ public interface MigrationExecutor<D extends AbstractMigrationDescriptor>
      * Run the actual migration.
      *
      * @param migrationDescriptor the migration descriptor
+     * @throws MigrationException if an error happens
      * @return the status of the current migration
      */
-    MigrationStatus execute(D migrationDescriptor);
+    MigrationStatus execute(D migrationDescriptor) throws MigrationException;
 }
