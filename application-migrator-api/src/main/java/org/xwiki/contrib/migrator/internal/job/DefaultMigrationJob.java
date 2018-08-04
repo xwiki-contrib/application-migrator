@@ -19,13 +19,17 @@
  */
 package org.xwiki.contrib.migrator.internal.job;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.util.DefaultParameterizedType;
+import org.xwiki.contrib.migrator.AbstractMigrationDescriptor;
 import org.xwiki.contrib.migrator.MigrationException;
 import org.xwiki.contrib.migrator.MigrationExecutor;
+import org.xwiki.contrib.migrator.MigrationHistoryStore;
+import org.xwiki.contrib.migrator.MigrationStatus;
 import org.xwiki.contrib.migrator.job.AbstractMigrationJob;
 
 /**
@@ -38,16 +42,26 @@ import org.xwiki.contrib.migrator.job.AbstractMigrationJob;
 @Named(AbstractMigrationJob.JOB_TYPE)
 public class DefaultMigrationJob extends AbstractMigrationJob
 {
+    @Inject
+    private MigrationHistoryStore migrationHistoryStore;
+
     @Override
     protected void runInternal() throws Exception
     {
+        AbstractMigrationDescriptor migrationDescriptor = request.getMigrationDescriptor();
+
         // Fetch the executor that could be used for the migration
         try {
             MigrationExecutor executor = componentManager.getInstance(
                     new DefaultParameterizedType(MigrationExecutor.class, MigrationExecutor.class,
-                                    request.getMigrationDescriptor().getClass()));
+                                    migrationDescriptor.getClass()));
 
-            status.setMigrationStatus(executor.execute(request.getMigrationDescriptor()));
+            MigrationStatus migrationStatus = executor.execute(migrationDescriptor);
+            status.setMigrationStatus(migrationStatus);
+
+            if (migrationStatus.getStatus().equals(MigrationStatus.Status.SUCCESS)) {
+                migrationHistoryStore.addAppliedMigration(migrationDescriptor);
+            }
         } catch (ComponentLookupException e) {
             throw new MigrationException(String.format(
                     "Failed to retrieve a MigrationExecutor for the descriptor type [%s]",
