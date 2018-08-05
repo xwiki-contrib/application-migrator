@@ -29,25 +29,68 @@ import org.xwiki.extension.ExtensionId;
  * A migration should be related to a specific extension and extension version, it describes the migration itself
  * (actions taken, when should the migration occur, …).
  *
+ * @param <T> the type of migration that this descriptor describes
  * @version $Id$
  * @since 1.0
  */
-public abstract class AbstractMigrationDescriptor
+public abstract class AbstractMigrationDescriptor<T extends MigrationType>
 {
+    private ExtensionId extensionId;
+
+    private String migrationName;
+
+    private String migrationDescription;
+
+    private MigrationParameters<? extends T> migrationParameters;
+
+    /**
+     * Build a new migration descriptors with its default attributes.
+     *
+     * @param extensionId the extension to which this migration applies
+     * @param migrationName the name of the migration
+     * @param migrationDescription a description of the migration
+     * @param migrationParameters the migration parameters
+     */
+    public AbstractMigrationDescriptor(ExtensionId extensionId, String migrationName, String migrationDescription,
+            MigrationParameters<? extends T> migrationParameters)
+    {
+        this.extensionId = extensionId;
+        this.migrationName = migrationName;
+        this.migrationDescription = migrationDescription;
+        this.migrationParameters = migrationParameters;
+    }
+
     /**
      * @return the extension ID for which this migration applies to
      */
-    public abstract ExtensionId getExtensionId();
+    public ExtensionId getExtensionId()
+    {
+        return extensionId;
+    }
 
     /**
      * @return the name of the migration
      */
-    public abstract String getMigrationName();
+    public String getMigrationName()
+    {
+        return migrationName;
+    }
 
     /**
      * @return the description of the migration
      */
-    public abstract String getMigrationDescription();
+    public String getMigrationDescription()
+    {
+        return migrationDescription;
+    }
+
+    /**
+     * @return the parameters that will be used in this migration
+     */
+    public MigrationParameters<? extends T> getMigrationParameters()
+    {
+        return migrationParameters;
+    }
 
     /**
      * @return the UUID of the current migration

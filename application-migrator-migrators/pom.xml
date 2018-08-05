@@ -24,35 +24,15 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.xwiki.contrib</groupId>
-    <artifactId>parent-platform</artifactId>
-    <version>9.11-5</version>
+    <artifactId>application-migrator</artifactId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>application-migrator</artifactId>
+  <artifactId>application-migrator-migrators</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>Migrator Application - Parent POM</name>
+  <name>Migrator Application - Migrators - Parent POM</name>
+  <description>Module implementing defining the default migrators that can be used in the migrator application.</description>
   <packaging>pom</packaging>
-  <description>Allow to define migrations at the extension level.</description>
-  <scm>
-    <connection>scm:git:git://github.com/xwiki-contrib/application-migrator.git</connection>
-    <developerConnection>scm:git:git@github.com:xwiki-contrib/application-migrator.git</developerConnection>
-    <url>https://github.com/xwiki-contrib/application-migrator/tree/master</url>
-    <tag>HEAD</tag>
-  </scm>
-  <developers>
-    <developer>
-      <id>aubincleme</id>
-      <name>Clément Aubin</name>
-    </developer>
-  </developers>
-  <properties>
-    <xwiki.release.jira.skip>false</xwiki.release.jira.skip>
-    <xwiki.issueManagement.system>jira</xwiki.issueManagement.system>
-    <xwiki.issueManagement.url>https://jira.xwiki.org/browse/MIGRATOR</xwiki.issueManagement.url>
-  </properties>
   <modules>
-    <module>application-migrator-api</module>
-    <module>application-migrator-default</module>
-    <module>application-migrator-migrators</module>
+    <module>application-migrator-migrators-class</module>
   </modules>
 </project>
-
