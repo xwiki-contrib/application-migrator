@@ -19,10 +19,15 @@
  */
 package org.xwiki.contrib.migrator.internal;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
+import org.xwiki.contrib.migrator.MigrationException;
+import org.xwiki.contrib.migrator.MigrationManager;
+import org.xwiki.extension.InstalledExtension;
 import org.xwiki.extension.event.ExtensionUpgradedEvent;
 import org.xwiki.observation.AbstractEventListener;
 import org.xwiki.observation.event.Event;
@@ -43,6 +48,12 @@ public class UpgradedExtensionEventListener extends AbstractEventListener
      */
     public static final String LISTENER_NAME = "UpgradedExtensionEventListener";
 
+    @Inject
+    private MigrationManager migrationManager;
+
+    @Inject
+    private Logger logger;
+
     /**
      * Build a new {@link UpgradedExtensionEventListener}.
      */
@@ -54,6 +65,14 @@ public class UpgradedExtensionEventListener extends AbstractEventListener
     @Override
     public void onEvent(Event event, Object source, Object data)
     {
+        InstalledExtension installedExtension = (InstalledExtension) source;
 
+        try {
+            if (migrationManager.hasAvailableMigrations(installedExtension.getId())) {
+                migrationManager.applyMigrationsForVersion(installedExtension.getId());
+            }
+        } catch (MigrationException e) {
+            logger.error("Failed to apply extension migrations correctly.", e);
+        }
     }
 }

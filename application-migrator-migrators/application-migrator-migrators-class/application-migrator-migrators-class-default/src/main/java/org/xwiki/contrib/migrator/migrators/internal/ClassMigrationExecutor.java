@@ -66,7 +66,7 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
     private DocumentReferenceResolver<String> documentReferenceResolver;
 
     // As we're instantiating the executor per lookup (and not as a singleton), we can have the freedom to
-    // store private attributes.
+    // store private attributes without them interfering with other executions.
 
     private XWikiContext xWikiContext;
 
@@ -89,7 +89,6 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
           TODO: Rely more on the MigrationStatus that we have to return as it will determine wether we can store
           the migration and mark it as done or not.
          */
-
 
         // Initialize the essential attributes of our executor
         this.migrationDescriptor = migrationDescriptor;
