@@ -46,6 +46,16 @@ public class MigrationStatus
         FAILURE
     }
 
+    /**
+     * A simple instance of a successful migration status.
+     */
+    public static final MigrationStatus SUCCESS = new MigrationStatus(Status.SUCCESS);
+
+    /**
+     * A simple instance of a failed migration status.
+     */
+    public static final MigrationStatus FAILURE = new MigrationStatus(Status.FAILURE);
+
     private Status status;
 
     private String message;
