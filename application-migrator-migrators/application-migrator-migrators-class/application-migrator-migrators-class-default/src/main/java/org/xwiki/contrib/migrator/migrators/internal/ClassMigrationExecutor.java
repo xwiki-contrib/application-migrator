@@ -19,6 +19,7 @@
  */
 package org.xwiki.contrib.migrator.migrators.internal;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -84,9 +85,17 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
     @Override
     public MigrationStatus execute(ClassMigrationDescriptor migrationDescriptor) throws MigrationException
     {
+        /*
+          TODO: Rely more on the MigrationStatus that we have to return as it will determine wether we can store
+          the migration and mark it as done or not.
+         */
+
+
         // Initialize the essential attributes of our executor
         this.migrationDescriptor = migrationDescriptor;
         migrationParameters = (ClassMigrationParameters) migrationDescriptor.getMigrationParameters();
+        classPropertiesMapping = new HashMap<>();
+
         xWikiContext = xWikiContextProvider.get();
         xwiki = xWikiContext.getWiki();
 
@@ -97,14 +106,20 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
         // Step 0 : Construct the complete mapping that we'll use to migrate one object to another
         constructPropertiesMapping();
 
-        // Step 1 : Migrate the XObjects
+        // Step 1 : Migrate the XObjects (if needed, delete the old XObjects)
         migrateAllXObjects();
 
-        // Step 2 : If needed, remove the old XObjects
+        // Step 2 : If needed, remove the old XClass
+        if (migrationParameters.isRemoveOldXClass()) {
+            try {
+                xwiki.deleteDocument(xwiki.getDocument(oldClassReference, xWikiContext), false, xWikiContext);
+            } catch (XWikiException e) {
+                throw new MigrationException(
+                        String.format("Failed to remove the old XClass [%s]", migrationParameters.getOldClass()));
+            }
+        }
 
-        // Step 3 : If needed, remove the old XClass
-
-        return null;
+        return MigrationStatus.SUCCESS;
     }
 
     private void constructPropertiesMapping() throws MigrationException
@@ -133,7 +148,8 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
     {
         try {
             // Get a list of XObjects implementing the old XClass
-            Query query = queryManager.createQuery("select doc.fullName from XWikiDocument doc, BaseObject obj "
+            Query query = queryManager.createQuery("select distinct doc.fullName "
+                    + "from XWikiDocument doc, BaseObject obj "
                     + "where doc.fullName = obj.name and obj.className = :oldClassName", Query.HQL);
 
             List<String> results = query.bindValue("oldClassName", migrationParameters.getOldClass()).execute();
@@ -158,6 +174,13 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
 
             for (BaseObject object : objects) {
                 document.addXObject(migrateXObject(object));
+            }
+
+            // If asked, we remove the old XObjects
+            if (migrationParameters.isRemoveOldXObjects()) {
+                for (BaseObject object : objects) {
+                    document.removeXObject(object);
+                }
             }
 
             String saveComment = String.format("Migrate objects from XClass [%s] to XClass [%s] "
