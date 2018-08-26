@@ -30,6 +30,9 @@
   <artifactId>application-migrator-api</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>Migrator Application - API</name>
+  <properties>
+    <xwiki.jacoco.instructionRatio>0.28</xwiki.jacoco.instructionRatio>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.xwiki.commons</groupId>
@@ -41,6 +44,20 @@
       <groupId>org.xwiki.commons</groupId>
       <artifactId>xwiki-commons-extension-api</artifactId>
       <version>${commons.version}</version>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-tool-test-component</artifactId>
+      <version>${commons.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-bridge</artifactId>
+      <version>${platform.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

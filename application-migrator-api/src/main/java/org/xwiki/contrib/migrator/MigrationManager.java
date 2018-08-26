@@ -22,7 +22,7 @@ package org.xwiki.contrib.migrator;
 import java.util.Set;
 
 import org.xwiki.component.annotation.Role;
-import org.xwiki.contrib.migrator.job.AbstractMigrationJobStatus;
+import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobStatus;
 import org.xwiki.extension.ExtensionId;
 
 /**
@@ -59,7 +59,7 @@ public interface MigrationManager
      * @throws MigrationException if an error happens
      * @return the job status of the migration
      */
-    AbstractMigrationJobStatus applyMigrations(Set<AbstractMigrationDescriptor> migrationDescriptors)
+    AbstractBulkMigrationJobStatus applyMigrations(Set<AbstractMigrationDescriptor> migrationDescriptors)
             throws MigrationException;
 
     /**
@@ -69,5 +69,5 @@ public interface MigrationManager
      * @throws MigrationException if an error happens
      * @return the job status of the migration
      */
-    AbstractMigrationJobStatus applyMigrationsForVersion(ExtensionId extensionId) throws MigrationException;
+    AbstractBulkMigrationJobStatus applyMigrationsForVersion(ExtensionId extensionId) throws MigrationException;
 }

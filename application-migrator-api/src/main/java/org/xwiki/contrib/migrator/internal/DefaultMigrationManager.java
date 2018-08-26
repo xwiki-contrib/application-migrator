@@ -40,7 +40,7 @@ import org.xwiki.contrib.migrator.MigrationManager;
 import org.xwiki.contrib.migrator.internal.job.DefaultBulkMigrationJobRequest;
 import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJob;
 import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobRequest;
-import org.xwiki.contrib.migrator.job.AbstractMigrationJobStatus;
+import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobStatus;
 import org.xwiki.extension.ExtensionId;
 import org.xwiki.job.JobException;
 import org.xwiki.job.JobExecutor;
@@ -99,14 +99,14 @@ public class DefaultMigrationManager implements MigrationManager
     }
 
     @Override
-    public AbstractMigrationJobStatus applyMigrations(Set<AbstractMigrationDescriptor> migrationDescriptors)
+    public AbstractBulkMigrationJobStatus applyMigrations(Set<AbstractMigrationDescriptor> migrationDescriptors)
             throws MigrationException
     {
         AbstractBulkMigrationJobRequest jobRequest = new DefaultBulkMigrationJobRequest();
         jobRequest.setMigrationDescriptors(migrationDescriptors);
 
         try {
-            return (AbstractMigrationJobStatus)
+            return (AbstractBulkMigrationJobStatus)
                     jobExecutor.execute(AbstractBulkMigrationJob.JOB_TYPE, jobRequest).getStatus();
         } catch (JobException e) {
             throw new MigrationException("Failed to start a bulk migration job.", e);
@@ -114,7 +114,7 @@ public class DefaultMigrationManager implements MigrationManager
     }
 
     @Override
-    public AbstractMigrationJobStatus applyMigrationsForVersion(ExtensionId extensionId) throws MigrationException
+    public AbstractBulkMigrationJobStatus applyMigrationsForVersion(ExtensionId extensionId) throws MigrationException
     {
         return applyMigrations(getAvailableMigrations(extensionId));
     }

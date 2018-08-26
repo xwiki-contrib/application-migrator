@@ -65,14 +65,16 @@ public class UpgradedExtensionEventListener extends AbstractEventListener
     @Override
     public void onEvent(Event event, Object source, Object data)
     {
-        InstalledExtension installedExtension = (InstalledExtension) source;
+        if (event instanceof ExtensionUpgradedEvent) {
+            InstalledExtension installedExtension = (InstalledExtension) source;
 
-        try {
-            if (migrationManager.hasAvailableMigrations(installedExtension.getId())) {
-                migrationManager.applyMigrationsForVersion(installedExtension.getId());
+            try {
+                if (migrationManager.hasAvailableMigrations(installedExtension.getId())) {
+                    migrationManager.applyMigrationsForVersion(installedExtension.getId());
+                }
+            } catch (MigrationException e) {
+                logger.error("Failed to apply extension migrations correctly.", e);
             }
-        } catch (MigrationException e) {
-            logger.error("Failed to apply extension migrations correctly.", e);
         }
     }
 }
