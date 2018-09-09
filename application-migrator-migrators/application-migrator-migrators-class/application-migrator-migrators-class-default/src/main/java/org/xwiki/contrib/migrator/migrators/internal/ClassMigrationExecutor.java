@@ -86,7 +86,7 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
     public MigrationStatus execute(ClassMigrationDescriptor migrationDescriptor) throws MigrationException
     {
         /*
-          TODO: Rely more on the MigrationStatus that we have to return as it will determine wether we can store
+          TODO: Rely more on the MigrationStatus that we have to return as it will determine whether we can store
           the migration and mark it as done or not.
          */
 
