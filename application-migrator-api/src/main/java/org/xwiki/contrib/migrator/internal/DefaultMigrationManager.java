@@ -38,9 +38,13 @@ import org.xwiki.contrib.migrator.MigrationException;
 import org.xwiki.contrib.migrator.MigrationHistoryStore;
 import org.xwiki.contrib.migrator.MigrationManager;
 import org.xwiki.contrib.migrator.internal.job.DefaultBulkMigrationJobRequest;
+import org.xwiki.contrib.migrator.internal.job.DefaultMigrationJobRequest;
 import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJob;
 import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobRequest;
 import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobStatus;
+import org.xwiki.contrib.migrator.job.AbstractMigrationJob;
+import org.xwiki.contrib.migrator.job.AbstractMigrationJobRequest;
+import org.xwiki.contrib.migrator.job.AbstractMigrationJobStatus;
 import org.xwiki.extension.ExtensionId;
 import org.xwiki.job.JobException;
 import org.xwiki.job.JobExecutor;
@@ -96,6 +100,21 @@ public class DefaultMigrationManager implements MigrationManager
                 .filter(x -> !appliedMigrations.contains(x.getMigrationUUID())).collect(Collectors.toSet());
 
         return availableMigrations;
+    }
+
+    @Override
+    public AbstractMigrationJobStatus applyMigration(AbstractMigrationDescriptor migrationDescriptor)
+            throws MigrationException
+    {
+        AbstractMigrationJobRequest jobRequest = new DefaultMigrationJobRequest();
+        jobRequest.setMigrationDescriptor(migrationDescriptor);
+
+        try {
+            return (AbstractMigrationJobStatus)
+                    jobExecutor.execute(AbstractMigrationJob.JOB_TYPE, jobRequest).getStatus();
+        } catch (JobException e) {
+            throw new MigrationException("Failed to start a migration job.", e);
+        }
     }
 
     @Override

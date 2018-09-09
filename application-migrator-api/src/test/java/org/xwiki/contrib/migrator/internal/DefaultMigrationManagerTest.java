@@ -33,7 +33,6 @@ import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.contrib.migrator.AbstractMigrationDescriptor;
 import org.xwiki.contrib.migrator.MigrationDescriptorProvider;
 import org.xwiki.contrib.migrator.MigrationHistoryStore;
-import org.xwiki.contrib.migrator.MigrationParameters;
 import org.xwiki.extension.Extension;
 import org.xwiki.extension.ExtensionId;
 import org.xwiki.job.JobExecutor;
@@ -44,8 +43,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**

@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.xwiki.component.annotation.Role;
 import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobStatus;
+import org.xwiki.contrib.migrator.job.AbstractMigrationJobStatus;
 import org.xwiki.extension.ExtensionId;
 
 /**
@@ -51,6 +52,16 @@ public interface MigrationManager
      * @return the available migrations
      */
     Set<AbstractMigrationDescriptor> getAvailableMigrations(ExtensionId extensionId) throws MigrationException;
+
+    /**
+     * Apply the given migration.
+     *
+     * @param migrationDescriptor the migration to apply
+     * @throws MigrationException if an error happens
+     * @return the job status of the migration
+     */
+    AbstractMigrationJobStatus applyMigration(AbstractMigrationDescriptor migrationDescriptor)
+            throws MigrationException;
 
     /**
      * Applies the given migrations.
