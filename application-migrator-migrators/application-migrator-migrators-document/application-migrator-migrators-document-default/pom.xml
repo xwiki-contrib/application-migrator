@@ -24,16 +24,23 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.xwiki.contrib</groupId>
-    <artifactId>application-migrator</artifactId>
+    <artifactId>application-migrator-migrators-document</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>application-migrator-migrators</artifactId>
+  <artifactId>application-migrator-migrators-document-default</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <name>Migrator Application - Migrators - Parent POM</name>
-  <description>Module implementing defining the default migrators that can be used in the migrator application.</description>
-  <packaging>pom</packaging>
-  <modules>
-    <module>application-migrator-migrators-class</module>
-    <module>application-migrator-migrators-document</module>
-  </modules>
+  <name>Migrator Application - Migrators - Documents - Default Bridge</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.xwiki.contrib</groupId>
+      <artifactId>application-migrator-migrators-document-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-platform-oldcore</artifactId>
+      <version>${platform.version}</version>
+    </dependency>
+  </dependencies>
 </project>
