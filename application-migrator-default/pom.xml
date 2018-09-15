@@ -25,10 +25,10 @@
   <parent>
     <groupId>org.xwiki.contrib</groupId>
     <artifactId>application-migrator</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
   <artifactId>application-migrator-default</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>Migrator Application - Default Bridge</name>
   <description>Module implementing parts of application-migrator-api while depending on XWiki old core.</description>
   <dependencies>

@@ -25,10 +25,10 @@
   <parent>
     <groupId>org.xwiki.contrib</groupId>
     <artifactId>application-migrator</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
   <artifactId>application-migrator-api</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>Migrator Application - API</name>
   <properties>
     <xwiki.jacoco.instructionRatio>0.24</xwiki.jacoco.instructionRatio>
