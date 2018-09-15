@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
@@ -34,10 +35,16 @@ import org.xwiki.contrib.migrator.AbstractMigrationDescriptor;
 import org.xwiki.contrib.migrator.MigrationDescriptorProvider;
 import org.xwiki.contrib.migrator.MigrationException;
 import org.xwiki.extension.ExtensionId;
+import org.xwiki.model.reference.DocumentReference;
+import org.xwiki.model.reference.DocumentReferenceResolver;
 import org.xwiki.query.Query;
 import org.xwiki.query.QueryException;
 import org.xwiki.query.QueryManager;
 
+import com.xpn.xwiki.XWiki;
+import com.xpn.xwiki.XWikiContext;
+import com.xpn.xwiki.XWikiException;
+import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 
 /**
@@ -62,24 +69,38 @@ public class WikiClassMigrationDescriptorProvider implements MigrationDescriptor
     @Inject
     private QueryManager queryManager;
 
+    @Inject
+    private DocumentReferenceResolver<String> stringDocumentReferenceResolver;
+
+    @Inject
+    private Provider<XWikiContext> xWikiContextProvider;
+
     @Override
     public Set<AbstractMigrationDescriptor> getMigrations(ExtensionId extensionId) throws MigrationException
     {
         Set<AbstractMigrationDescriptor> resultSet = new HashSet<>();
 
-        try {
-            Query query = queryManager.createQuery(
-                    "select obj from BaseObject obj "
-                            + "where obj.name in :documents and obj.className = :class", Query.HQL);
-            query.bindValue("documents", getDocumentList());
-            query.bindValue(CLASS_LITERAL, ClassMigrationClassDocumentInitializer.CLASS_NAME);
-            List<BaseObject> results = query.execute();
+        Set<DocumentReference> documentSet = getDocumentSet();
 
-            for (BaseObject result : results) {
-                resultSet.add(createFromBaseObject(result));
+        if (documentSet.size() != 0) {
+            XWikiContext context = xWikiContextProvider.get();
+            XWiki xwiki = context.getWiki();
+
+            DocumentReference classReference =
+                    stringDocumentReferenceResolver.resolve(ClassMigrationClassDocumentInitializer.CLASS_REFERENCE);
+
+            try {
+                for (DocumentReference documentReference : documentSet) {
+                    XWikiDocument document = xwiki.getDocument(documentReference, context);
+
+                    for (BaseObject object : document.getXObjects(classReference)) {
+                        resultSet.add(createFromBaseObject(object));
+                    }
+                }
+            } catch (XWikiException e) {
+                throw new MigrationException("Failed to retrieve a list of class migration XObjects.", e);
             }
-        } catch (QueryException e) {
-            throw new MigrationException("Failed to retrieve a list of class migration XObjects.", e);
+
         }
 
         return resultSet;
@@ -124,9 +145,9 @@ public class WikiClassMigrationDescriptorProvider implements MigrationDescriptor
     }
 
     /**
-     * @return a list of documents containing XObjects of the ClassMigrationClass XClass
+     * @return a set of documents containing XObjects of the ClassMigrationClass XClass
      */
-    private List<String> getDocumentList() throws MigrationException
+    private Set<DocumentReference> getDocumentSet() throws MigrationException
     {
         try {
             Query query = queryManager.createQuery(
@@ -134,7 +155,15 @@ public class WikiClassMigrationDescriptorProvider implements MigrationDescriptor
                             + "from XWikiDocument doc, BaseObject obj "
                             + "where obj.name = doc.fullName and obj.className = :class", Query.HQL);
             query.bindValue(CLASS_LITERAL, ClassMigrationClassDocumentInitializer.CLASS_REFERENCE);
-            return query.execute();
+
+            List<String> results = query.execute();
+            Set<DocumentReference> documentSet = new HashSet<>();
+
+            for (String result : results) {
+                documentSet.add(stringDocumentReferenceResolver.resolve(result));
+            }
+
+            return documentSet;
         } catch (QueryException e) {
             throw new MigrationException("Failed to retrieve a list of documents containing class migrations.", e);
         }

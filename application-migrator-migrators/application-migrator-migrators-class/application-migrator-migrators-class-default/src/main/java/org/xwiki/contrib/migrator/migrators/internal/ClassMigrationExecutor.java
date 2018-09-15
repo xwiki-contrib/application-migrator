@@ -27,6 +27,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.slf4j.Logger;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.InstantiationStrategy;
 import org.xwiki.component.descriptor.ComponentInstantiationStrategy;
@@ -65,6 +66,9 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
     @Inject
     private DocumentReferenceResolver<String> documentReferenceResolver;
 
+    @Inject
+    private Logger logger;
+
     // As we're instantiating the executor per lookup (and not as a singleton), we can have the freedom to
     // store private attributes without them interfering with other executions.
 
@@ -102,6 +106,11 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
         oldClassReference = documentReferenceResolver.resolve(migrationParameters.getOldClass());
         newClassReference = documentReferenceResolver.resolve(migrationParameters.getNewClass());
 
+        if (!xwiki.exists(newClassReference, xWikiContext)) {
+            logger.error("The new class reference does not exists! Aborting ...");
+            throw new MigrationException("Failed to migrate the XClasses : the new class does not exist.");
+        }
+
         // Step 0 : Construct the complete mapping that we'll use to migrate one object to another
         constructPropertiesMapping();
 
@@ -109,7 +118,7 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
         migrateAllXObjects();
 
         // Step 2 : If needed, remove the old XClass
-        if (migrationParameters.isRemoveOldXClass()) {
+        if (migrationParameters.isRemoveOldXClass() && xwiki.exists(oldClassReference, xWikiContext)) {
             try {
                 xwiki.deleteDocument(xwiki.getDocument(oldClassReference, xWikiContext), false, xWikiContext);
             } catch (XWikiException e) {
@@ -123,6 +132,7 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
 
     private void constructPropertiesMapping() throws MigrationException
     {
+        logger.info("Building properties mapping ...");
         try {
             // Here again, three steps
             // Step 1 : Get the current structures of the two XClasses
@@ -141,10 +151,19 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
 
         // Step 2 : Add the custom mapping ; update the existing default mapping if needed
         classPropertiesMapping.putAll(migrationParameters.getPropertiesMapping());
+        logger.info("{} properties mapped.", classPropertiesMapping.size());
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Complete mapping :");
+            for (String key : classPropertiesMapping.keySet()) {
+                logger.debug("[{}] => [{}]", key, classPropertiesMapping.get(key));
+            }
+        }
     }
 
     private void migrateAllXObjects() throws MigrationException
     {
+        logger.info("Migrating XObjects from XClass [{}] to new XClass [{}].", oldClassReference, newClassReference);
         try {
             // Get a list of XObjects implementing the old XClass
             Query query = queryManager.createQuery("select distinct doc.fullName "
@@ -169,16 +188,23 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
     private void migrateDocumentXObjects(XWikiDocument document) throws MigrationException
     {
         if (document != null) {
+            logger.debug("Migrating XObjects of document [{}] ...", document.getDocumentReference());
             List<BaseObject> objects = document.getXObjects(oldClassReference);
 
             for (BaseObject object : objects) {
-                document.addXObject(migrateXObject(object));
+                if (object != null) {
+                    logger.debug("Migrating XObject [{}], creating XObject with the new XClass ...", object);
+                    document.addXObject(migrateXObject(object));
+                }
             }
 
             // If asked, we remove the old XObjects
             if (migrationParameters.isRemoveOldXObjects()) {
+                logger.debug("Removing old XObjects from the document [{}] ...", document.getDocumentReference());
                 for (BaseObject object : objects) {
-                    document.removeXObject(object);
+                    if (object != null) {
+                        document.removeXObject(object);
+                    }
                 }
             }
 
