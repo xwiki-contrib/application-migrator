@@ -31,7 +31,7 @@
   <version>1.0-SNAPSHOT</version>
   <name>Migrator Application - API</name>
   <properties>
-    <xwiki.jacoco.instructionRatio>0.27</xwiki.jacoco.instructionRatio>
+    <xwiki.jacoco.instructionRatio>0.24</xwiki.jacoco.instructionRatio>
   </properties>
   <dependencies>
     <dependency>
