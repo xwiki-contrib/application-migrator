@@ -19,11 +19,14 @@
  */
 package org.xwiki.contrib.migrator;
 
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
+import org.xwiki.extension.ExtensionId;
 import org.xwiki.script.service.ScriptService;
 import org.xwiki.stability.Unstable;
 
@@ -59,5 +62,34 @@ public class MigrationScriptService implements ScriptService
     public MigrationHistoryStore getStore()
     {
         return migrationHistoryStore;
+    }
+
+    /**
+     * Helper for {@link MigrationManager#hasAvailableMigrations(ExtensionId)} allowing to get migrations without
+     * actually needing to instantiate a new {@link ExtensionId}.
+     *
+     * @param extensionId the ID of the extension to check
+     * @param extensionVersion the version of the extension to check
+     * @return true if the extension has at least one migration available
+     * @throws MigrationException if an error happens
+     */
+    public boolean hasAvailableMigrations(String extensionId, String extensionVersion) throws MigrationException
+    {
+        return migrationManager.hasAvailableMigrations(new ExtensionId(extensionId, extensionVersion));
+    }
+
+    /**
+     * Helper for {@link MigrationManager#getAvailableMigrations(ExtensionId)} allowing to get migrations without
+     * actually needing to instantiate a new {@link ExtensionId}.
+     *
+     * @param extensionId the ID of the extension to check
+     * @param extensionVersion the version of the extension to check
+     * @return the available migrations for the given extension
+     * @throws MigrationException if an error happens
+     */
+    public Set<AbstractMigrationDescriptor> getAvailableMigrations(String extensionId, String extensionVersion)
+        throws MigrationException
+    {
+        return migrationManager.getAvailableMigrations(new ExtensionId(extensionId, extensionVersion));
     }
 }
