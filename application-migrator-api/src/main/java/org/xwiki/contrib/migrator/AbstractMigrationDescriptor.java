@@ -19,8 +19,7 @@
  */
 package org.xwiki.contrib.migrator;
 
-import java.util.UUID;
-
+import org.apache.commons.codec.digest.DigestUtils;
 import org.xwiki.extension.ExtensionId;
 
 /**
@@ -47,7 +46,7 @@ public abstract class AbstractMigrationDescriptor<T extends MigrationType>
      * Build a new migration descriptors with its default attributes.
      *
      * @param extensionId the extension to which this migration applies
-     * @param migrationName the name of the migration
+     * @param migrationName the name of the migration, it should be unique
      * @param migrationDescription a description of the migration
      * @param migrationParameters the migration parameters
      */
@@ -94,10 +93,15 @@ public abstract class AbstractMigrationDescriptor<T extends MigrationType>
 
     /**
      * @return the UUID of the current migration
+     *
+     * Note that we are using a {@link String} instead of a real {@link java.util.UUID} in order to prevent
+     * unexpected changes of the way the UUID computes itself.
+     * Even if {@link #getMigrationName()} should be unique, we mix the migration name with its description and its
+     * extension ID in order to be sure to get a proper unique UUID.
      */
-    public final UUID getMigrationUUID()
+    public final String getMigrationUUID()
     {
-        return UUID.nameUUIDFromBytes(String.format("%s-%s-%s-%s", getExtensionId(),
-                getMigrationName(), getMigrationDescription(), hashCode()).getBytes());
+        return DigestUtils.sha256Hex(String.format("%s-%s-%s", getExtensionId(),
+                getMigrationName(), getMigrationDescription()).getBytes());
     }
 }

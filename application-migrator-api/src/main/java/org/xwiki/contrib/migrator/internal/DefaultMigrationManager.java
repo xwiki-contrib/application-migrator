@@ -21,7 +21,6 @@ package org.xwiki.contrib.migrator.internal;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -95,7 +94,7 @@ public class DefaultMigrationManager implements MigrationManager
         }
 
         // Remove every migration that has already been applied according to the migration history store
-        Set<UUID> appliedMigrations = migrationHistoryStore.getAppliedMigrationsForVersion(extensionId);
+        Set<String> appliedMigrations = migrationHistoryStore.getAppliedMigrationsForVersion(extensionId);
         availableMigrations = availableMigrations.stream()
                 .filter(x -> !appliedMigrations.contains(x.getMigrationUUID())).collect(Collectors.toSet());
 
@@ -110,8 +109,7 @@ public class DefaultMigrationManager implements MigrationManager
         jobRequest.setMigrationDescriptor(migrationDescriptor);
 
         try {
-            return (AbstractMigrationJobStatus)
-                    jobExecutor.execute(AbstractMigrationJob.JOB_TYPE, jobRequest).getStatus();
+            return ((AbstractMigrationJob) jobExecutor.execute(AbstractMigrationJob.JOB_TYPE, jobRequest)).getStatus();
         } catch (JobException e) {
             throw new MigrationException("Failed to start a migration job.", e);
         }
@@ -125,8 +123,8 @@ public class DefaultMigrationManager implements MigrationManager
         jobRequest.setMigrationDescriptors(migrationDescriptors);
 
         try {
-            return (AbstractBulkMigrationJobStatus)
-                    jobExecutor.execute(AbstractBulkMigrationJob.JOB_TYPE, jobRequest).getStatus();
+            return ((AbstractBulkMigrationJob) jobExecutor.execute(AbstractBulkMigrationJob.JOB_TYPE, jobRequest))
+                    .getStatus();
         } catch (JobException e) {
             throw new MigrationException("Failed to start a bulk migration job.", e);
         }

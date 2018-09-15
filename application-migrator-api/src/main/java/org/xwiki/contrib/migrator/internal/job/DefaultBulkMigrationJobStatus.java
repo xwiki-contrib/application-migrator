@@ -20,7 +20,6 @@
 package org.xwiki.contrib.migrator.internal.job;
 
 import java.util.Map;
-import java.util.UUID;
 
 import org.xwiki.contrib.migrator.MigrationStatus;
 import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobRequest;
@@ -37,7 +36,7 @@ import org.xwiki.observation.ObservationManager;
  */
 public class DefaultBulkMigrationJobStatus extends AbstractBulkMigrationJobStatus
 {
-    private Map<UUID, MigrationStatus> migrationStatuses;
+    private Map<String, MigrationStatus> migrationStatuses;
 
     /**
      * Builds a new {@link AbstractBulkMigrationJobStatus}.
@@ -57,13 +56,13 @@ public class DefaultBulkMigrationJobStatus extends AbstractBulkMigrationJobStatu
     }
 
     @Override
-    public void setMigrationStatuses(Map<UUID, MigrationStatus> migrationStatuses)
+    public void setMigrationStatuses(Map<String, MigrationStatus> migrationStatuses)
     {
         this.migrationStatuses = migrationStatuses;
     }
 
     @Override
-    public Map<UUID, MigrationStatus> getMigrationStatuses()
+    public Map<String, MigrationStatus> getMigrationStatuses()
     {
         return migrationStatuses;
     }

@@ -20,7 +20,6 @@
 package org.xwiki.contrib.migrator.job;
 
 import java.util.Map;
-import java.util.UUID;
 
 import org.xwiki.contrib.migrator.MigrationStatus;
 import org.xwiki.job.DefaultJobStatus;
@@ -60,11 +59,11 @@ public abstract class AbstractBulkMigrationJobStatus extends DefaultJobStatus<Ab
      *
      * @param migrationStatuses the migration statuses
      */
-    public abstract void setMigrationStatuses(Map<UUID, MigrationStatus> migrationStatuses);
+    public abstract void setMigrationStatuses(Map<String, MigrationStatus> migrationStatuses);
 
     /**
      * @return a map containing, for each migration performed (identified by its UUID), the status returned by
      * the migration executor.
      */
-    public abstract Map<UUID, MigrationStatus> getMigrationStatuses();
+    public abstract Map<String, MigrationStatus> getMigrationStatuses();
 }

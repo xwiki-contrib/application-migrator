@@ -20,7 +20,6 @@
 package org.xwiki.contrib.migrator;
 
 import java.util.Set;
-import java.util.UUID;
 
 import org.xwiki.component.annotation.Role;
 import org.xwiki.extension.ExtensionId;
@@ -45,10 +44,10 @@ public interface MigrationHistoryStore
      *
      * @param extensionId the extension and its version. If the version of the extension is not given,
      * then the result will be an empty set.
-     * @return a set of applied migrations for the corresponding version of the extension
+     * @return a set of applied migrations UUIDs for the corresponding version of the extension
      * @throws MigrationException if an error happens
      */
-    Set<UUID> getAppliedMigrationsForVersion(ExtensionId extensionId) throws MigrationException;
+    Set<String> getAppliedMigrationsForVersion(ExtensionId extensionId) throws MigrationException;
 
     /**
      * Declare a new migration applied on the wiki.

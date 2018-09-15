@@ -31,6 +31,10 @@ import org.xwiki.contrib.migrator.MigrationExecutor;
 import org.xwiki.contrib.migrator.MigrationHistoryStore;
 import org.xwiki.contrib.migrator.MigrationStatus;
 import org.xwiki.contrib.migrator.job.AbstractMigrationJob;
+import org.xwiki.contrib.migrator.job.AbstractMigrationJobRequest;
+import org.xwiki.contrib.migrator.job.AbstractMigrationJobStatus;
+import org.xwiki.job.Job;
+import org.xwiki.job.event.status.JobStatus;
 
 /**
  * This is the default implementation of {@link AbstractMigrationJob}.
@@ -46,6 +50,15 @@ public class DefaultMigrationJob extends AbstractMigrationJob
     private MigrationHistoryStore migrationHistoryStore;
 
     @Override
+    protected AbstractMigrationJobStatus createNewStatus(AbstractMigrationJobRequest request)
+    {
+        Job currentJob = this.jobContext.getCurrentJob();
+        JobStatus currentJobStatus = currentJob != null ? currentJob.getStatus() : null;
+        return new DefaultMigrationJobStatus(AbstractMigrationJob.JOB_TYPE, request, currentJobStatus,
+                this.observationManager, this.loggerManager);
+    }
+
+    @Override
     protected void runInternal() throws Exception
     {
         AbstractMigrationDescriptor migrationDescriptor = request.getMigrationDescriptor();
@@ -53,7 +66,7 @@ public class DefaultMigrationJob extends AbstractMigrationJob
         // Fetch the executor that could be used for the migration
         try {
             MigrationExecutor executor = componentManager.getInstance(
-                    new DefaultParameterizedType(MigrationExecutor.class, MigrationExecutor.class,
+                    new DefaultParameterizedType(null, MigrationExecutor.class,
                                     migrationDescriptor.getClass()));
 
             MigrationStatus migrationStatus = executor.execute(migrationDescriptor);

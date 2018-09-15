@@ -23,10 +23,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
@@ -37,6 +37,7 @@ import org.xwiki.contrib.migrator.MigrationHistoryStore;
 import org.xwiki.extension.ExtensionId;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.DocumentReferenceResolver;
+import org.xwiki.model.reference.EntityReferenceSerializer;
 import org.xwiki.query.Query;
 import org.xwiki.query.QueryException;
 import org.xwiki.query.QueryManager;
@@ -85,10 +86,14 @@ public class DefaultMigrationHistoryStore implements MigrationHistoryStore
     @Inject
     private DocumentReferenceResolver<String> documentReferenceResolver;
 
+    @Inject
+    @Named("local")
+    private EntityReferenceSerializer<String> localStringEntityReferenceSerializer;
+
     @Override
-    public Set<UUID> getAppliedMigrationsForVersion(ExtensionId extensionId) throws MigrationException
+    public Set<String> getAppliedMigrationsForVersion(ExtensionId extensionId) throws MigrationException
     {
-        Set<UUID> resultSet = new HashSet<>();
+        Set<String> resultSet = new HashSet<>();
 
         if (extensionId.getVersion() != null && extensionId.getId() != null && !extensionId.getId().isEmpty()) {
             try {
@@ -97,13 +102,12 @@ public class DefaultMigrationHistoryStore implements MigrationHistoryStore
                                 + "where obj.name = :doc and obj.className = :class and uuid.id.id = obj.id "
                                 + "and uuid.id.name = :uuid ", Query.HQL);
 
-                query.bindValue("doc", String.format("%s.%s.%s.%s", MIGRATOR_SPACE_NAME, STORE_SPACE_NAME,
-                        extensionId.getId(), extensionId.getVersion()));
+                query.bindValue("doc", String.format("%s",
+                        localStringEntityReferenceSerializer.serialize(buildDocumentReference(extensionId))));
                 query.bindValue("class", MigrationHistoryClassDocumentInitializer.CLASS_REFERENCE);
-                query.bindValue("uui", MigrationHistoryClassDocumentInitializer.UUID_PROPERTY);
+                query.bindValue("uuid", MigrationHistoryClassDocumentInitializer.UUID_PROPERTY);
                 List<String> results = query.execute();
-
-                resultSet = results.stream().map(UUID::fromString).collect(Collectors.toSet());
+                resultSet = results.stream().collect(Collectors.toSet());
 
             } catch (QueryException e) {
                 throw new MigrationException(
@@ -119,7 +123,7 @@ public class DefaultMigrationHistoryStore implements MigrationHistoryStore
     {
         XWikiContext xContext = xWikiContextProvider.get();
         XWiki xWiki = xContext.getWiki();
-        UUID migrationUUID = migrationDescriptor.getMigrationUUID();
+        String migrationUUID = migrationDescriptor.getMigrationUUID();
 
         if (xWiki != null) {
             try {

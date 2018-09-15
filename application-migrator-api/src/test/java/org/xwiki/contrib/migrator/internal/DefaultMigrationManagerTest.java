@@ -156,7 +156,7 @@ public class DefaultMigrationManagerTest
         AbstractMigrationDescriptor appliedDescriptor2 = new FakeMigrationDescriptor(dummyExtensionId, "m2",
                 "md2", null);
 
-        Set<UUID> appliedDescriptors = Sets.newSet(
+        Set<String> appliedDescriptors = Sets.newSet(
                 appliedDescriptor1.getMigrationUUID(),
                 appliedDescriptor2.getMigrationUUID());
 

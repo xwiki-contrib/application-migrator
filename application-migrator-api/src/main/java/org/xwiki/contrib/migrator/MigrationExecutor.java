@@ -19,6 +19,8 @@
  */
 package org.xwiki.contrib.migrator;
 
+import org.xwiki.component.annotation.Role;
+
 /**
  * Define a migration executor.
  *
@@ -29,6 +31,7 @@ package org.xwiki.contrib.migrator;
  * @version $Id$
  * @since 1.0
  */
+@Role
 public interface MigrationExecutor<T extends AbstractMigrationDescriptor>
 {
     /**

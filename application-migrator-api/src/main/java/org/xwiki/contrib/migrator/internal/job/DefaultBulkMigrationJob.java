@@ -29,10 +29,14 @@ import org.xwiki.component.annotation.Component;
 import org.xwiki.contrib.migrator.AbstractMigrationDescriptor;
 import org.xwiki.contrib.migrator.MigrationException;
 import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJob;
+import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobRequest;
+import org.xwiki.contrib.migrator.job.AbstractBulkMigrationJobStatus;
 import org.xwiki.contrib.migrator.job.AbstractMigrationJob;
 import org.xwiki.contrib.migrator.job.AbstractMigrationJobRequest;
+import org.xwiki.job.Job;
 import org.xwiki.job.JobException;
 import org.xwiki.job.JobExecutor;
+import org.xwiki.job.event.status.JobStatus;
 
 /**
  * This is the default implementation of {@link AbstractBulkMigrationJob}.
@@ -46,6 +50,15 @@ public class DefaultBulkMigrationJob extends AbstractBulkMigrationJob
 {
     @Inject
     private JobExecutor jobExecutor;
+
+    @Override
+    protected AbstractBulkMigrationJobStatus createNewStatus(AbstractBulkMigrationJobRequest request)
+    {
+        Job currentJob = this.jobContext.getCurrentJob();
+        JobStatus currentJobStatus = currentJob != null ? currentJob.getStatus() : null;
+        return new DefaultBulkMigrationJobStatus(AbstractBulkMigrationJob.JOB_TYPE, request, currentJobStatus,
+                this.observationManager, this.loggerManager);
+    }
 
     @Override
     protected void runInternal() throws Exception
