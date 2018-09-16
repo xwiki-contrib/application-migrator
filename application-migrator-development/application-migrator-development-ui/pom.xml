@@ -30,6 +30,10 @@
   <artifactId>application-migrator-development-ui</artifactId>
   <name>Migrator Application - Development Toolkit - UI</name>
   <packaging>xar</packaging>
+  <properties>
+    <!-- Name to display by the Extension Manager -->
+    <xwiki.extension.name>Migrator Application - Development Toolkit</xwiki.extension.name>
+  </properties>
   <dependencies>
     <!-- Here, we explicitly include dependencies for every migrator declared in the app so that when pulling this
     package, every migrator that can be used is also pulled. -->
