@@ -19,30 +19,13 @@
  */
 package org.xwiki.contrib.migrator.migrators.internal;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
-import org.xwiki.contrib.migrator.AbstractMigrationDescriptor;
-import org.xwiki.contrib.migrator.MigrationDescriptorProvider;
-import org.xwiki.contrib.migrator.MigrationException;
+import org.xwiki.contrib.migrator.migrators.AbstractWikiMigrationDescriptorProvider;
 import org.xwiki.extension.ExtensionId;
-import org.xwiki.model.reference.DocumentReference;
-import org.xwiki.model.reference.DocumentReferenceResolver;
-import org.xwiki.query.Query;
-import org.xwiki.query.QueryException;
-import org.xwiki.query.QueryManager;
 
-import com.xpn.xwiki.XWiki;
-import com.xpn.xwiki.XWikiContext;
-import com.xpn.xwiki.XWikiException;
-import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 
 /**
@@ -55,56 +38,15 @@ import com.xpn.xwiki.objects.BaseObject;
 @Component
 @Named(WikiDocumentMigrationDescriptorProvider.COMPONENT_NAME)
 @Singleton
-public class WikiDocumentMigrationDescriptorProvider implements MigrationDescriptorProvider
+public class WikiDocumentMigrationDescriptorProvider extends AbstractWikiMigrationDescriptorProvider
 {
     /**
      * The name of the component used as a hint against the ComponentManager.
      */
     public static final String COMPONENT_NAME = "WikiDocumentMigrationDescriptorProvider";
 
-    private static final String CLASS_LITERAL = "class";
-
-    @Inject
-    private QueryManager queryManager;
-
-    @Inject
-    private DocumentReferenceResolver<String> stringDocumentReferenceResolver;
-
-    @Inject
-    private Provider<XWikiContext> xWikiContextProvider;
-
     @Override
-    public Set<AbstractMigrationDescriptor> getMigrations(ExtensionId extensionId) throws MigrationException
-    {
-        Set<AbstractMigrationDescriptor> resultSet = new HashSet<>();
-
-        Set<DocumentReference> documentSet = getDocumentSet();
-
-        if (documentSet.size() != 0) {
-            XWikiContext context = xWikiContextProvider.get();
-            XWiki xwiki = context.getWiki();
-
-            DocumentReference classReference =
-                    stringDocumentReferenceResolver.resolve(DocumentMigrationClassDocumentInitializer.CLASS_REFERENCE);
-
-            try {
-                for (DocumentReference documentReference : documentSet) {
-                    XWikiDocument document = xwiki.getDocument(documentReference, context);
-
-                    for (BaseObject object : document.getXObjects(classReference)) {
-                        resultSet.add(createFromBaseObject(object));
-                    }
-                }
-            } catch (XWikiException e) {
-                throw new MigrationException("Failed to retrieve a list of document migration XObjects.", e);
-            }
-
-        }
-
-        return resultSet;
-    }
-
-    private DocumentMigrationDescriptor createFromBaseObject(BaseObject object)
+    protected DocumentMigrationDescriptor createFromBaseObject(BaseObject object)
     {
         ExtensionId extensionId = new ExtensionId(
                 object.getStringValue(DocumentMigrationClassDocumentInitializer.EXTENSION_ID_PROPERTY),
@@ -123,28 +65,9 @@ public class WikiDocumentMigrationDescriptorProvider implements MigrationDescrip
                 migrationParameters);
     }
 
-    /**
-     * @return a set of documents containing XObjects of the DocumentMigrationClass XClass
-     */
-    private Set<DocumentReference> getDocumentSet() throws MigrationException
+    @Override
+    protected String getXClassReferenceAsString()
     {
-        try {
-            Query query = queryManager.createQuery(
-                    "select distinct doc.fullName "
-                            + "from XWikiDocument doc, BaseObject obj "
-                            + "where obj.name = doc.fullName and obj.className = :class", Query.HQL);
-            query.bindValue(CLASS_LITERAL, DocumentMigrationClassDocumentInitializer.CLASS_REFERENCE);
-
-            List<String> results = query.execute();
-            Set<DocumentReference> documentSet = new HashSet<>();
-
-            for (String result : results) {
-                documentSet.add(stringDocumentReferenceResolver.resolve(result));
-            }
-
-            return documentSet;
-        } catch (QueryException e) {
-            throw new MigrationException("Failed to retrieve a list of documents containing document migrations.", e);
-        }
+        return DocumentMigrationClassDocumentInitializer.CLASS_REFERENCE;
     }
 }

@@ -26,9 +26,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.xwiki.component.annotation.Component;
+import org.xwiki.contrib.migrator.migrators.AbstractMigrationClassDocumentInitializer;
 import org.xwiki.model.reference.LocalDocumentReference;
 
-import com.xpn.xwiki.doc.AbstractMandatoryClassInitializer;
 import com.xpn.xwiki.objects.classes.BaseClass;
 import com.xpn.xwiki.objects.classes.TextAreaClass;
 
@@ -41,7 +41,7 @@ import com.xpn.xwiki.objects.classes.TextAreaClass;
 @Component
 @Singleton
 @Named("Migrator.Migrators.DocumentMigrationClass")
-public class DocumentMigrationClassDocumentInitializer extends AbstractMandatoryClassInitializer
+public class DocumentMigrationClassDocumentInitializer extends AbstractMigrationClassDocumentInitializer
 {
     /**
      * The name of the XClass.
@@ -52,26 +52,6 @@ public class DocumentMigrationClassDocumentInitializer extends AbstractMandatory
      * The XClass reference.
      */
     public static final String CLASS_REFERENCE = String.format("Migrator.Migrators.%s", CLASS_NAME);
-
-    /**
-     * The name of the migration.
-     */
-    public static final String MIGRATION_NAME_PROPERTY = "migrationName";
-
-    /**
-     * The description of the migration.
-     */
-    public static final String MIGRATION_DESCRIPTION_PROPERTY = "migrationDescription";
-
-    /**
-     * The extension ID targeted by the migration.
-     */
-    public static final String EXTENSION_ID_PROPERTY = "extensionId";
-
-    /**
-     * The extension version targeted by the migration.
-     */
-    public static final String EXTENSION_VERSION_PROPERTY = "extensionVersion";
 
     /**
      * The reference of the document to target.
@@ -101,12 +81,8 @@ public class DocumentMigrationClassDocumentInitializer extends AbstractMandatory
     }
 
     @Override
-    protected void createClass(BaseClass xclass)
+    protected void appendClassProperties(BaseClass xclass)
     {
-        xclass.addTextField(MIGRATION_NAME_PROPERTY, "Migration name", 64);
-        xclass.addTextField(MIGRATION_DESCRIPTION_PROPERTY, "Migration description", 128);
-        xclass.addTextField(EXTENSION_ID_PROPERTY, "Extension ID", 64);
-        xclass.addTextField(EXTENSION_VERSION_PROPERTY, "Extension version", 64);
         xclass.addTextField(DOCUMENT_REFERENCE_PROPERTY, "Document reference", 128);
         xclass.addBooleanField(DELETE_DOCUMENT_PROPERTY, "Should the targeted document be deleted?", CHECKBOX_DISPLAY);
 

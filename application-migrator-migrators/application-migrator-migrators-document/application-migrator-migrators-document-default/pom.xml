@@ -36,6 +36,11 @@
       <artifactId>application-migrator-migrators-document-api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.xwiki.contrib</groupId>
+      <artifactId>application-migrator-migrators-default</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.xwiki.platform</groupId>

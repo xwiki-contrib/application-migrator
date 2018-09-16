@@ -24,27 +24,17 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.xwiki.contrib</groupId>
-    <artifactId>application-migrator-migrators-class</artifactId>
+    <artifactId>application-migrator-migrators</artifactId>
     <version>1.1-SNAPSHOT</version>
   </parent>
-  <artifactId>application-migrator-migrators-class-default</artifactId>
+  <artifactId>application-migrator-migrators-default</artifactId>
   <version>1.1-SNAPSHOT</version>
-  <name>Migrator Application - Migrators - Classes - Default Bridge</name>
+  <name>Migrator Application - Migrators - Default Bridge</name>
+  <description>Set of diverse interfaces and abstracts to help the creation of new migrators.</description>
   <dependencies>
     <dependency>
       <groupId>org.xwiki.contrib</groupId>
       <artifactId>application-migrator-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.contrib</groupId>
-      <artifactId>application-migrator-migrators-default</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.xwiki.contrib</groupId>
-      <artifactId>application-migrator-migrators-class-api</artifactId>
       <version>${project.version}</version>
     </dependency>
 

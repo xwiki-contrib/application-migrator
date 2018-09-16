@@ -34,6 +34,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>application-migrator-migrators-class</module>
+    <module>application-migrator-migrators-default</module>
     <module>application-migrator-migrators-document</module>
   </modules>
 </project>
