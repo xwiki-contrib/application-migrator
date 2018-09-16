@@ -49,7 +49,7 @@
     </dependency>
     <dependency>
       <groupId>org.xwiki.contrib</groupId>
-      <artifactId>application-migrator-migrators-script</artifactId>
+      <artifactId>application-migrator-migrators-scripts-default</artifactId>
       <version>${project.version}</version>
     </dependency>
 
