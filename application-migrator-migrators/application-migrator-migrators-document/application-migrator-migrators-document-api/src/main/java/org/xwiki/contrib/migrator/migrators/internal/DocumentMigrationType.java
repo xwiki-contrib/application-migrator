@@ -25,7 +25,7 @@ import org.xwiki.contrib.migrator.MigrationType;
  * Define a type for document migrations.
  *
  * @version $Id$
- * @since 1.0
+ * @since 1.1
  */
 public class DocumentMigrationType implements MigrationType
 {

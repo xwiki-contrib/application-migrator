@@ -28,7 +28,7 @@ import org.xwiki.extension.ExtensionId;
  * documents.
  *
  * @version $Id$
- * @since 1.0
+ * @since 1.1
  */
 public class DocumentMigrationDescriptor extends AbstractMigrationDescriptor<DocumentMigrationType>
 {

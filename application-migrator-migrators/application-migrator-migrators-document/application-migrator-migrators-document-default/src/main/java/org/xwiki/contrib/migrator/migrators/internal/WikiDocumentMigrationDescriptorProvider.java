@@ -50,7 +50,7 @@ import com.xpn.xwiki.objects.BaseObject;
  * {@link DocumentMigrationClassDocumentInitializer}.
  *
  * @version $Id$
- * @since 1.0
+ * @since 1.1
  */
 @Component
 @Named(WikiDocumentMigrationDescriptorProvider.COMPONENT_NAME)

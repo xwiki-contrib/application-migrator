@@ -26,7 +26,7 @@ import org.xwiki.model.reference.DocumentReference;
  * Define the generic parameters that can be used for document migration descriptors.
  *
  * @version $Id$
- * @since 1.0
+ * @since 1.1
  */
 public class DocumentMigrationParameters implements MigrationParameters<DocumentMigrationType>
 {

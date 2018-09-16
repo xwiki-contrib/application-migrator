@@ -38,7 +38,7 @@ import com.xpn.xwiki.XWikiException;
  * Executes migrations of type {@link DocumentMigrationDescriptor}.
  *
  * @version $Id$
- * @since 1.0
+ * @since 1.1
  */
 @Component
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)

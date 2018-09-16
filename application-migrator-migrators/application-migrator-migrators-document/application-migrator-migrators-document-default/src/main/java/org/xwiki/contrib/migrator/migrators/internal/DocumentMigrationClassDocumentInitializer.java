@@ -36,7 +36,7 @@ import com.xpn.xwiki.objects.classes.TextAreaClass;
  * This XClass defines a migration of XClasses for an extension.
  *
  * @version $Id$
- * @since 1.0
+ * @since 1.1
  */
 @Component
 @Singleton
