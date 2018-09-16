@@ -20,6 +20,7 @@
 package org.xwiki.contrib.migrator.migrators.internal;
 
 import org.xwiki.contrib.migrator.MigrationParameters;
+import org.xwiki.model.reference.DocumentReference;
 
 /**
  * Define the generic parameters that can be used for document migration descriptors.
@@ -29,4 +30,35 @@ import org.xwiki.contrib.migrator.MigrationParameters;
  */
 public class DocumentMigrationParameters implements MigrationParameters<DocumentMigrationType>
 {
+    private DocumentReference documentReference;
+
+    private boolean deleteDocument;
+
+    /**
+     * Constructs a new {@link DocumentMigrationParameters}.
+     *
+     * @param documentReference the document that is targeted by the current migration
+     * @param deleteDocument should the current document be deleted?
+     */
+    public DocumentMigrationParameters(DocumentReference documentReference, boolean deleteDocument)
+    {
+        this.documentReference = documentReference;
+        this.deleteDocument = deleteDocument;
+    }
+
+    /**
+     * @return the reference to the document that will be dealt with during the migration
+     */
+    public DocumentReference getDocumentReference()
+    {
+        return documentReference;
+    }
+
+    /**
+     * @return wether the document should be deleted or not
+     */
+    public boolean isDeleteDocument()
+    {
+        return deleteDocument;
+    }
 }
