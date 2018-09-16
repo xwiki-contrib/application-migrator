@@ -24,18 +24,17 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.xwiki.contrib</groupId>
-    <artifactId>application-migrator</artifactId>
+    <artifactId>application-migrator-migrators-script</artifactId>
     <version>1.1-SNAPSHOT</version>
   </parent>
-  <artifactId>application-migrator-migrators</artifactId>
+  <artifactId>application-migrator-migrators-script-api</artifactId>
   <version>1.1-SNAPSHOT</version>
-  <name>Migrator Application - Migrators - Parent POM</name>
-  <description>Module implementing defining the default migrators that can be used in the migrator application.</description>
-  <packaging>pom</packaging>
-  <modules>
-    <module>application-migrator-migrators-class</module>
-    <module>application-migrator-migrators-default</module>
-    <module>application-migrator-migrators-document</module>
-    <module>application-migrator-migrators-script</module>
-  </modules>
+  <name>Migrator Application - Migrators - Scripts - API</name>
+  <dependencies>
+    <dependency>
+      <groupId>org.xwiki.contrib</groupId>
+      <artifactId>application-migrator-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>
