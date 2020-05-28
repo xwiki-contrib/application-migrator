@@ -51,7 +51,6 @@
   </properties>
   <modules>
     <module>application-migrator-api</module>
-    <module>application-migrator-default</module>
     <module>application-migrator-development</module>
     <module>application-migrator-migrators</module>
     <module>application-migrator-script</module>

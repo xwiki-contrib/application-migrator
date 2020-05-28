@@ -36,10 +36,10 @@
       <artifactId>application-migrator-api</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
+    <!-- <dependency>
       <groupId>org.xwiki.contrib</groupId>
       <artifactId>application-migrator-default</artifactId>
       <version>${project.version}</version>
-    </dependency>
+    </dependency> -->
   </dependencies>
 </project>
