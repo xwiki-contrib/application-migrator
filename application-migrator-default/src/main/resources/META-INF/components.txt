@@ -1,2 +1,3 @@
 org.xwiki.contrib.migrator.internal.DefaultMigrationHistoryStore
 org.xwiki.contrib.migrator.internal.MigrationHistoryClassDocumentInitializer
+org.xwiki.contrib.migrator.internal.MigrationHistoryStoreProvider
