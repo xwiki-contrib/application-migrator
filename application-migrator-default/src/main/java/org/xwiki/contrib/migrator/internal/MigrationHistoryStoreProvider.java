@@ -40,7 +40,8 @@ public class MigrationHistoryStoreProvider implements Provider<MigrationHistoryS
     private MigrationHistoryStore migrationHistoryStore;
 
     @Override
-    public MigrationHistoryStore get() {
+    public MigrationHistoryStore get()
+    {
         return migrationHistoryStore;
     }
 }
