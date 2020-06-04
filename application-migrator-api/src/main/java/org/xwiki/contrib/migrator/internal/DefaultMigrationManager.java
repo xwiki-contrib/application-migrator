@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.slf4j.Logger;
@@ -69,7 +70,7 @@ public class DefaultMigrationManager implements MigrationManager
     private JobExecutor jobExecutor;
 
     @Inject
-    private MigrationHistoryStore migrationHistoryStore;
+    private Provider<MigrationHistoryStore> migrationHistoryStoreProvider;
 
     @Override
     public boolean hasAvailableMigrations(ExtensionId extensionId) throws MigrationException
@@ -94,7 +95,7 @@ public class DefaultMigrationManager implements MigrationManager
         }
 
         // Remove every migration that has already been applied according to the migration history store
-        Set<String> appliedMigrations = migrationHistoryStore.getAppliedMigrationsForVersion(extensionId);
+        Set<String> appliedMigrations = migrationHistoryStoreProvider.get().getAppliedMigrationsForVersion(extensionId);
         availableMigrations = availableMigrations.stream()
                 .filter(x -> !appliedMigrations.contains(x.getMigrationUUID())).collect(Collectors.toSet());
 
