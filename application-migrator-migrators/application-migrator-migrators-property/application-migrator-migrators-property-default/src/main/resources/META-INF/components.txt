@@ -1,0 +1,3 @@
+org.xwiki.contrib.migrator.migrators.internal.PropertyMigrationClassDocumentInitializer
+org.xwiki.contrib.migrator.migrators.internal.PropertyMigrationExecutor
+org.xwiki.contrib.migrator.migrators.internal.WikiPropertyMigrationDescriptorProvider

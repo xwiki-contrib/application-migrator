@@ -32,8 +32,8 @@ import org.xwiki.extension.ExtensionId;
 import com.xpn.xwiki.objects.BaseObject;
 
 /**
- * Provides {@link ClassMigrationDescriptor} extracted from wiki pages through the XClass defined in
- * {@link ClassMigrationClassDocumentInitializer}.
+ * Provides {@link ClassMigrationDescriptor} extracted from wiki pages through the XClass
+ * defined in {@link ClassMigrationClassDocumentInitializer}.
  *
  * @version $Id$
  * @since 1.0
