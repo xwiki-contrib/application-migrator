@@ -41,6 +41,8 @@ import com.xpn.xwiki.XWiki;
 import com.xpn.xwiki.XWikiContext;
 import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
+import com.xpn.xwiki.objects.BaseObject;
+import com.xpn.xwiki.objects.BaseProperty;
 import com.xpn.xwiki.objects.classes.BaseClass;
 import com.xpn.xwiki.objects.classes.PropertyClass;
 
@@ -242,10 +244,24 @@ public class PropertyMigrationExecutor implements MigrationExecutor<PropertyMigr
     {
         logger.info("Migrating a property from type [{}] to new type [{}].", oldPropertyType.getName(),
             newPropertyType.getName());
-
-        // set the new field with the old property class
-        document.setProperty(classReference, newPropertyType.getName(),
-            oldPropertyType.fromString(migrationParameters.getOldProperty()));
+        try {
+            for (BaseObject o : xwiki.getDocument(classReference, xWikiContext).getXObjects(classReference)) {
+                // an entity in the target document
+                // set the new field with the old property class
+                o.set(newPropertyType.getName(), ((BaseProperty) o.safeget(oldPropertyType.getName())).getValue(),
+                    xWikiContext);
+            }
+        } catch (Exception e) {
+            throw new MigrationException(
+                String.format("Property Migration fails at the old property: [%s]", oldPropertyType.getName()), e);
+        }
+        
+        try {
+            xwiki.saveDocument(document, "trial", xWikiContext);
+        } catch (XWikiException e) {
+            throw new MigrationException(String.format("Failed to save migrated document [%s]",
+                    document.getDocumentReference()), e);
+        }
     }
 
 }
