@@ -36,6 +36,9 @@ import org.xwiki.contrib.migrator.MigrationExecutor;
 import org.xwiki.contrib.migrator.MigrationStatus;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.DocumentReferenceResolver;
+import org.xwiki.query.Query;
+import org.xwiki.query.QueryException;
+import org.xwiki.query.QueryManager;
 
 import com.xpn.xwiki.XWiki;
 import com.xpn.xwiki.XWikiContext;
@@ -43,8 +46,6 @@ import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.objects.BaseProperty;
-import com.xpn.xwiki.objects.classes.BaseClass;
-import com.xpn.xwiki.objects.classes.PropertyClass;
 
 /**
  * Executes migrations of type {@link PropertyMigrationType}.
@@ -65,6 +66,9 @@ public class PropertyMigrationExecutor implements MigrationExecutor<PropertyMigr
     private static final String EMAIL_TYPE = "EMail";
 
     @Inject
+    private QueryManager queryManager;
+
+    @Inject
     private Provider<XWikiContext> xWikiContextProvider;
 
     @Inject
@@ -81,11 +85,13 @@ public class PropertyMigrationExecutor implements MigrationExecutor<PropertyMigr
 
     private PropertyMigrationParameters migrationParameters;
 
-    private DocumentReference classReference;
+    private DocumentReference targetClassReference;
 
-    private PropertyClass oldPropertyType;
+    private String oldPropertyName;
 
-    private PropertyClass newPropertyType;
+    private String oldPropertyType;
+
+    private String newPropertyType;
 
     private PropertyConversionCheckerProvider provider = new PropertyConversionCheckerProvider();
 
@@ -117,6 +123,7 @@ public class PropertyMigrationExecutor implements MigrationExecutor<PropertyMigr
         PropertyConversionChecker(String propertyType)
         {
             this.propertyType = propertyType;
+            this.allSupportedProperties = new ArrayList<String>();
         }
 
         public List<String> getAllSupportedProperties()
@@ -142,45 +149,48 @@ public class PropertyMigrationExecutor implements MigrationExecutor<PropertyMigr
         populizePropertyConversionChecker();
 
         // STEP 1 : we get two properties (old property and new property could be document meta data)
-        classReference = documentReferenceResolver.resolve(migrationParameters.getTargetClass());
-        if (!xwiki.exists(classReference, xWikiContext)) {
-            logger.error("The new class reference does not exists! Aborting ...");
-            throw new MigrationException("Failed to migrate the XClasses : the new class does not exist.");
-        }
-
-        BaseClass c = new BaseClass();
-
         try {
-            c = xwiki.getDocument(classReference, xWikiContext).getXClass();
-        } catch (XWikiException e) {
-            e.printStackTrace();
+            targetClassReference = documentReferenceResolver.resolve(migrationParameters.getTargetClass());
+
+            for (String propertyName : xwiki.getDocument(targetClassReference, xWikiContext).getXClass()
+                .getPropertyList()) {
+                // PropertyClass propertyClass = (PropertyClass) o;
+                if (propertyName.equals(migrationParameters.getPropertyName())) {
+                    oldPropertyName = propertyName;
+                }
+            }
+
+            oldPropertyType = migrationParameters.getOldProperty();
+            newPropertyType = migrationParameters.getNewProperty();
+
+        } catch (Exception e) {
+            throw new MigrationException(String.format("fail to fetch properties"), e);
         }
 
-        // get two propertyClasses, then compare name
-        for (Object o : c.getProperties()) {
-            PropertyClass propertyClass = (PropertyClass) o;
-            if (propertyClass.getName().equals(migrationParameters.getOldProperty())) {
-                oldPropertyType = propertyClass;
-            }
-            if (propertyClass.getName().equals(migrationParameters.getNewProperty())) {
-                newPropertyType = propertyClass;
-            }
-        }
         // STEP 2 : check compatibility (from anything to String (Compatible))
         if (areTwoPropertiesCompatible(oldPropertyType, newPropertyType)) {
             // STEP 3: start migration
             // TODO : isRemovedOldProperty?
             try {
-                migrateProperty(xwiki.getDocument(classReference, xWikiContext));
-            } catch (XWikiException e) {
-                throw new MigrationException(
-                    String.format("Failed to migrate the old property [%s]", migrationParameters.getOldProperty()));
+                Query query =
+                    queryManager.createQuery("select distinct doc.fullName " + "from XWikiDocument doc, BaseObject obj "
+                        + "where doc.fullName = obj.name and obj.className = :oldClassName", Query.HQL);
+
+                List<String> results = query.bindValue("oldClassName", migrationParameters.getTargetClass()).execute();
+
+                for (String result : results) {
+                    migrateProperty(result);
+                }
+            } catch (QueryException e) {
+                throw new MigrationException(String.format("Query fails at the old property: [%s]", oldPropertyName),
+                    e);
             }
         } else {
             return MigrationStatus.FAILURE;
         }
 
         return MigrationStatus.SUCCESS;
+
     }
 
     private void populizePropertyConversionChecker()
@@ -207,60 +217,60 @@ public class PropertyMigrationExecutor implements MigrationExecutor<PropertyMigr
         provider.getList().add(pEMailChecker);
     }
 
-    private boolean areTwoPropertiesCompatible(PropertyClass oldPropertyType, PropertyClass newPropertyType)
-        throws MigrationException
+    private boolean areTwoPropertiesCompatible(String oldPropertyType, String newPropertyType) throws MigrationException
     {
         logger.info("checking compatibility for property conversion ...");
 
         PropertyConversionChecker localChecker = null;
 
         // case 1 : same type
-        if (oldPropertyType.getName().equals(newPropertyType.getName())) {
+        if (oldPropertyType.equals(newPropertyType)) {
             return true;
         }
         // case 2 : different types
         // get the proper checker
         for (PropertyConversionChecker checker : provider.getList()) {
-            if (oldPropertyType.getName().equals(checker.getPropertyType())) {
+            if (oldPropertyType.equals(checker.getPropertyType())) {
                 localChecker = checker;
             }
         }
         // check if conversion between the target type and the resource type is supported
-        try {
-            for (String supportedType : localChecker.getAllSupportedProperties()) {
-                if (newPropertyType.getName() == supportedType) {
-                    return true;
-                }
+        for (String supportedType : localChecker.getAllSupportedProperties()) {
+            if (newPropertyType.equals(supportedType)) {
+                return true;
             }
-        } catch (NullPointerException e) {
-            throw new MigrationException(
-                String.format("old Property type:  [%s] is not supported.", oldPropertyType.getName()), e);
         }
 
         return false;
     }
 
-    private void migrateProperty(XWikiDocument document) throws MigrationException
+    private void migrateProperty(String result) throws MigrationException
     {
-        logger.info("Migrating a property from type [{}] to new type [{}].", oldPropertyType.getName(),
-            newPropertyType.getName());
+        logger.info("Migrating a property from type [{}] to new type [{}].", oldPropertyName, newPropertyType);
         try {
-            for (BaseObject o : xwiki.getDocument(classReference, xWikiContext).getXObjects(classReference)) {
+            XWikiDocument tempDoc = xwiki.getDocument(documentReferenceResolver.resolve(result), xWikiContext);
+            List<BaseObject> objects = tempDoc.getXObjects(targetClassReference);
+            
+            for (BaseObject o : objects) {
                 // an entity in the target document
                 // set the new field with the old property class
-                o.set(newPropertyType.getName(), ((BaseProperty) o.safeget(oldPropertyType.getName())).getValue(),
-                    xWikiContext);
+                if (o != null) {
+                    BaseObject newObject = new BaseObject();
+                    newObject.setXClassReference(targetClassReference);
+                    newObject.set("newProperty", ((BaseProperty) o.safeget(oldPropertyName)).getValue(), xWikiContext);
+                    tempDoc.addXObject(newObject);
+                }
+                
             }
-        } catch (Exception e) {
-            throw new MigrationException(
-                String.format("Property Migration fails at the old property: [%s]", oldPropertyType.getName()), e);
-        }
-        
-        try {
-            xwiki.saveDocument(document, "trial", xWikiContext);
+            try {
+                xwiki.saveDocument(tempDoc, "trial", xWikiContext);
+            } catch (XWikiException e) {
+                throw new MigrationException(
+                    String.format("Failed to save migrated document [%s]", tempDoc.getDocumentReference()), e);
+            }
         } catch (XWikiException e) {
-            throw new MigrationException(String.format("Failed to save migrated document [%s]",
-                    document.getDocumentReference()), e);
+            throw new MigrationException(
+                String.format("Property Migration fails at the old property: [%s]", oldPropertyName), e);
         }
     }
 

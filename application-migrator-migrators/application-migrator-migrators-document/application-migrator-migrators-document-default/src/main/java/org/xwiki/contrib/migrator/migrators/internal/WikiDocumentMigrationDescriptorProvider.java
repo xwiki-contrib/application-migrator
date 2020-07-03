@@ -35,11 +35,13 @@ import com.xpn.xwiki.objects.BaseObject;
  * @version $Id$
  * @since 1.1
  */
+
 @Component
 @Named(WikiDocumentMigrationDescriptorProvider.COMPONENT_NAME)
 @Singleton
 public class WikiDocumentMigrationDescriptorProvider extends AbstractWikiMigrationDescriptorProvider
 {
+
     /**
      * The name of the component used as a hint against the ComponentManager.
      */
@@ -48,21 +50,19 @@ public class WikiDocumentMigrationDescriptorProvider extends AbstractWikiMigrati
     @Override
     protected DocumentMigrationDescriptor createFromBaseObject(BaseObject object)
     {
-        ExtensionId extensionId = new ExtensionId(
-                object.getStringValue(DocumentMigrationClassDocumentInitializer.EXTENSION_ID_PROPERTY),
+        ExtensionId extensionId =
+            new ExtensionId(object.getStringValue(DocumentMigrationClassDocumentInitializer.EXTENSION_ID_PROPERTY),
                 object.getStringValue(DocumentMigrationClassDocumentInitializer.EXTENSION_VERSION_PROPERTY));
 
-
         DocumentMigrationParameters migrationParameters = new DocumentMigrationParameters(
-                stringDocumentReferenceResolver.resolve(
-                        object.getStringValue(DocumentMigrationClassDocumentInitializer.DOCUMENT_REFERENCE_PROPERTY)),
-                (object.getIntValue(DocumentMigrationClassDocumentInitializer.DELETE_DOCUMENT_PROPERTY, 0) == 1));
+            stringDocumentReferenceResolver
+                .resolve(object.getStringValue(DocumentMigrationClassDocumentInitializer.DOCUMENT_REFERENCE_PROPERTY)),
+            (object.getIntValue(DocumentMigrationClassDocumentInitializer.DELETE_DOCUMENT_PROPERTY, 0) == 1));
 
-        return new DocumentMigrationDescriptor(
-                extensionId,
-                object.getStringValue(DocumentMigrationClassDocumentInitializer.MIGRATION_NAME_PROPERTY),
-                object.getStringValue(DocumentMigrationClassDocumentInitializer.MIGRATION_DESCRIPTION_PROPERTY),
-                migrationParameters);
+        return new DocumentMigrationDescriptor(extensionId,
+            object.getStringValue(DocumentMigrationClassDocumentInitializer.MIGRATION_NAME_PROPERTY),
+            object.getStringValue(DocumentMigrationClassDocumentInitializer.MIGRATION_DESCRIPTION_PROPERTY),
+            migrationParameters);
     }
 
     @Override
@@ -70,4 +70,5 @@ public class WikiDocumentMigrationDescriptorProvider extends AbstractWikiMigrati
     {
         return DocumentMigrationClassDocumentInitializer.CLASS_REFERENCE;
     }
+
 }

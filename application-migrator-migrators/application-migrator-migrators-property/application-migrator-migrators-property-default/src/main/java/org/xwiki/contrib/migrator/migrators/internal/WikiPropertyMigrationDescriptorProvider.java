@@ -45,7 +45,7 @@ public class WikiPropertyMigrationDescriptorProvider extends AbstractWikiMigrati
     /**
      * The name of the component used as a hint against the ComponentManager.
      */
-    public static final String COMPONENT_NAME = "WikiClassMigrationDescriptorProvider";
+    public static final String COMPONENT_NAME = "WikiPropertyMigrationDescriptorProvider";
 
     @Override
     protected PropertyMigrationDescriptor createFromBaseObject(BaseObject object)
@@ -56,6 +56,7 @@ public class WikiPropertyMigrationDescriptorProvider extends AbstractWikiMigrati
 
         PropertyMigrationParameters migrationParameters = new PropertyMigrationParameters(
             object.getStringValue(PropertyMigrationClassDocumentInitializer.CLASS_REFERENCE_PROPERTY),
+            object.getStringValue(PropertyMigrationClassDocumentInitializer.PROPERTY_NAME),
             object.getStringValue(PropertyMigrationClassDocumentInitializer.OLD_PROPERTY_PROPERTY),
             object.getStringValue(PropertyMigrationClassDocumentInitializer.NEW_PROPERTY_PROPERTY),
             (object.getIntValue(PropertyMigrationClassDocumentInitializer.DELETE_PROPERTY_PROPERTY, 0) == 1));

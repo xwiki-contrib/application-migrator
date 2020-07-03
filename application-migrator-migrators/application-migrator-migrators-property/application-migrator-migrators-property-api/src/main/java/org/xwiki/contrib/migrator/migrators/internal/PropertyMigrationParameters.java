@@ -31,6 +31,8 @@ public class PropertyMigrationParameters implements MigrationParameters<Property
 {
     private String targetClass;
 
+    private String propertyName;
+
     private String oldProperty;
 
     private String newProperty;
@@ -41,14 +43,16 @@ public class PropertyMigrationParameters implements MigrationParameters<Property
      * Constructs a new {@link PropertyMigrationParameters}.
      *
      * @param targetClass the reference to the Class (where oldProperty and new Property sits together).
-     * @param oldProperty the reference to the new XClass.
-     * @param newProperty should the old XClass be removed?
+     * @param propertyName the target of the modified property.
+     * @param oldProperty the reference to the old XClass.
+     * @param newProperty the reference to the new XClass.
      * @param removeOldProperty should the old property be removed?
      */
-    public PropertyMigrationParameters(String targetClass, String oldProperty, String newProperty,
+    public PropertyMigrationParameters(String targetClass, String propertyName, String oldProperty, String newProperty,
         boolean removeOldProperty)
     {
         this.targetClass = targetClass;
+        this.propertyName = propertyName;
         this.oldProperty = oldProperty;
         this.newProperty = newProperty;
         this.removeOldProperty = removeOldProperty;
@@ -60,6 +64,14 @@ public class PropertyMigrationParameters implements MigrationParameters<Property
     public String getTargetClass()
     {
         return this.targetClass;
+    }
+
+    /**
+     * @return the reference to the old property
+     */
+    public String getPropertyName()
+    {
+        return this.propertyName;
     }
 
     /**

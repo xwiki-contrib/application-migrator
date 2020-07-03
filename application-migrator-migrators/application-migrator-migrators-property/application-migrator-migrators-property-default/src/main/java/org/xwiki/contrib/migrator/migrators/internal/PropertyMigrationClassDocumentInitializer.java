@@ -60,6 +60,11 @@ public class PropertyMigrationClassDocumentInitializer extends AbstractMigration
     /**
      * The reference of the old property.
      */
+    public static final String PROPERTY_NAME = "propertyName";
+    
+    /**
+     * The reference of the old property.
+     */
     public static final String OLD_PROPERTY_PROPERTY = "oldProperty";
     
     /**
@@ -88,6 +93,7 @@ public class PropertyMigrationClassDocumentInitializer extends AbstractMigration
     protected void appendClassProperties(BaseClass xclass)
     {
         xclass.addTextField(CLASS_REFERENCE_PROPERTY, "XClass reference", 128);
+        xclass.addTextField(PROPERTY_NAME, "Property name", 128);
         xclass.addTextField(OLD_PROPERTY_PROPERTY, "Old property reference", 128);
         xclass.addTextField(NEW_PROPERTY_PROPERTY, "New property reference", 128);
 
