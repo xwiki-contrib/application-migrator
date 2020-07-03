@@ -23,17 +23,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.xwiki.contrib</groupId>
     <artifactId>application-migrator-migrators</artifactId>
+    <groupId>org.xwiki.contrib</groupId>
     <version>1.2.4-SNAPSHOT</version>
   </parent>
-  <artifactId>application-migrator-migrators-class</artifactId>
+  <groupId>org.xwiki.contrib</groupId>
+  <artifactId>application-migrator-migrators-property</artifactId>
   <version>1.2.4-SNAPSHOT</version>
-  <name>Migrator Application - Migrators - Classes - Parent POM</name>
-  <description>Module implementing migrations for XClasses.</description>
+  <name>Migrator Application - Migrators - Properties- Parent POM</name>
+  <description>Module implementing migrations for Properties.</description>
   <packaging>pom</packaging>
   <modules>
-    <module>application-migrator-migrators-class-api</module>
-    <module>application-migrator-migrators-class-default</module>
+    <module>application-migrator-migrators-property-api</module>
+    <module>application-migrator-migrators-property-default</module>
   </modules>
 </project>

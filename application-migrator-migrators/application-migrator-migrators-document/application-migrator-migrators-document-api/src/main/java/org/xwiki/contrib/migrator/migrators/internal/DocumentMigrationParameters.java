@@ -55,7 +55,7 @@ public class DocumentMigrationParameters implements MigrationParameters<Document
     }
 
     /**
-     * @return wether the document should be deleted or not
+     * @return whether the document should be deleted or not
      */
     public boolean isDeleteDocument()
     {
