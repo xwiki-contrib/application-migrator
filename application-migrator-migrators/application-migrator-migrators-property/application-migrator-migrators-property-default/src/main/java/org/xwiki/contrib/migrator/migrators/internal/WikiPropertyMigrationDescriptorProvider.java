@@ -56,9 +56,10 @@ public class WikiPropertyMigrationDescriptorProvider extends AbstractWikiMigrati
 
         PropertyMigrationParameters migrationParameters = new PropertyMigrationParameters(
             object.getStringValue(PropertyMigrationClassDocumentInitializer.CLASS_REFERENCE_PROPERTY),
-            object.getStringValue(PropertyMigrationClassDocumentInitializer.PROPERTY_NAME),
-            object.getStringValue(PropertyMigrationClassDocumentInitializer.OLD_PROPERTY_PROPERTY),
-            object.getStringValue(PropertyMigrationClassDocumentInitializer.NEW_PROPERTY_PROPERTY),
+            object.getStringValue(PropertyMigrationClassDocumentInitializer.OLD_PROPERTY_REFERENCE),
+            object.getStringValue(PropertyMigrationClassDocumentInitializer.OLD_PROPERTY_TYPE),
+            object.getStringValue(PropertyMigrationClassDocumentInitializer.NEW_PROPERTY_TYPE),
+            object.getStringValue(PropertyMigrationClassDocumentInitializer.NEW_PROPERTY_REFERENCE),
             (object.getIntValue(PropertyMigrationClassDocumentInitializer.DELETE_PROPERTY_PROPERTY, 0) == 1));
 
         return new PropertyMigrationDescriptor(extensionId,

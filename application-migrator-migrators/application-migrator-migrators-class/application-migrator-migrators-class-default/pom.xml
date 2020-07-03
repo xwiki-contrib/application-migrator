@@ -25,10 +25,10 @@
   <parent>
     <groupId>org.xwiki.contrib</groupId>
     <artifactId>application-migrator-migrators-class</artifactId>
-    <version>1.1.8.6-SNAPSHOT</version>
+    <version>1.2.4-SNAPSHOT</version>
   </parent>
   <artifactId>application-migrator-migrators-class-default</artifactId>
-  <version>1.1.8.6-SNAPSHOT</version>
+  <version>1.2.4-SNAPSHOT</version>
   <name>Migrator Application - Migrators - Classes - Default Bridge</name>
   <dependencies>
     <dependency>

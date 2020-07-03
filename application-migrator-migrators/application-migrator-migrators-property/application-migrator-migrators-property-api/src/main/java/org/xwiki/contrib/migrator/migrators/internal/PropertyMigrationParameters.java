@@ -31,11 +31,13 @@ public class PropertyMigrationParameters implements MigrationParameters<Property
 {
     private String targetClass;
 
-    private String propertyName;
+    private String oldPropertyReference;
 
-    private String oldProperty;
+    private String oldPropertyType;
 
-    private String newProperty;
+    private String newPropertyType;
+
+    private String newPropertyReference;
 
     private boolean removeOldProperty;
 
@@ -43,18 +45,20 @@ public class PropertyMigrationParameters implements MigrationParameters<Property
      * Constructs a new {@link PropertyMigrationParameters}.
      *
      * @param targetClass the reference to the Class (where oldProperty and new Property sits together).
-     * @param propertyName the target of the modified property.
-     * @param oldProperty the reference to the old XClass.
+     * @param oldProperty the target of the modified property.
+     * @param oldPropertyType the type of the old XClass.
+     * @param newPropertyType the reference to the old XClass.
      * @param newProperty the reference to the new XClass.
      * @param removeOldProperty should the old property be removed?
      */
-    public PropertyMigrationParameters(String targetClass, String propertyName, String oldProperty, String newProperty,
-        boolean removeOldProperty)
+    public PropertyMigrationParameters(String targetClass, String oldProperty, String oldPropertyType,
+        String newPropertyType, String newProperty, boolean removeOldProperty)
     {
         this.targetClass = targetClass;
-        this.propertyName = propertyName;
-        this.oldProperty = oldProperty;
-        this.newProperty = newProperty;
+        this.oldPropertyReference = oldProperty;
+        this.oldPropertyType = oldPropertyType;
+        this.newPropertyType = newPropertyType;
+        this.newPropertyReference = newProperty;
         this.removeOldProperty = removeOldProperty;
     }
 
@@ -69,25 +73,33 @@ public class PropertyMigrationParameters implements MigrationParameters<Property
     /**
      * @return the reference to the old property
      */
-    public String getPropertyName()
+    public String getOldPropertyReference()
     {
-        return this.propertyName;
+        return this.oldPropertyReference;
     }
 
     /**
-     * @return the reference to the old property
+     * @return the type of the old property
      */
-    public String getOldProperty()
+    public String getOldPropertyType()
     {
-        return this.oldProperty;
+        return this.oldPropertyType;
+    }
+
+    /**
+     * @return the type of the new property
+     */
+    public String getNewPropertyType()
+    {
+        return this.newPropertyType;
     }
 
     /**
      * @return the reference to the new property
      */
-    public String getNewProperty()
+    public String getNewPropertyReference()
     {
-        return this.newProperty;
+        return this.newPropertyReference;
     }
 
     /**

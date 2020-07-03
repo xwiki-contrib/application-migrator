@@ -60,17 +60,22 @@ public class PropertyMigrationClassDocumentInitializer extends AbstractMigration
     /**
      * The reference of the old property.
      */
-    public static final String PROPERTY_NAME = "propertyName";
+    public static final String OLD_PROPERTY_REFERENCE = "oldPropertyReference";
     
     /**
-     * The reference of the old property.
+     * The type of the old property.
      */
-    public static final String OLD_PROPERTY_PROPERTY = "oldProperty";
+    public static final String OLD_PROPERTY_TYPE = "oldPropertyType";
+
+    /**
+     * The type of the new property.
+     */
+    public static final String NEW_PROPERTY_TYPE = "newPropertyType";
     
     /**
      * The reference of the new property.
      */
-    public static final String NEW_PROPERTY_PROPERTY = "newProperty";
+    public static final String NEW_PROPERTY_REFERENCE = "newPropertyReference";
 
     /**
      * Should the targeted property be deleted?
@@ -93,9 +98,10 @@ public class PropertyMigrationClassDocumentInitializer extends AbstractMigration
     protected void appendClassProperties(BaseClass xclass)
     {
         xclass.addTextField(CLASS_REFERENCE_PROPERTY, "XClass reference", 128);
-        xclass.addTextField(PROPERTY_NAME, "Property name", 128);
-        xclass.addTextField(OLD_PROPERTY_PROPERTY, "Old property reference", 128);
-        xclass.addTextField(NEW_PROPERTY_PROPERTY, "New property reference", 128);
+        xclass.addTextField(OLD_PROPERTY_REFERENCE, "Old property reference", 128);
+        xclass.addTextField(OLD_PROPERTY_TYPE, "Old property type", 128);
+        xclass.addTextField(NEW_PROPERTY_REFERENCE, "New property reference", 128);
+        xclass.addTextField(NEW_PROPERTY_TYPE, "New property type", 128);
 
         xclass.addBooleanField(DELETE_PROPERTY_PROPERTY, "Remove old Property?", CHECKBOX_DISPLAY);
     }

@@ -28,7 +28,7 @@
     <version>9.11-5</version>
   </parent>
   <artifactId>application-migrator</artifactId>
-  <version>1.1.8.6-SNAPSHOT</version>
+  <version>1.2.4-SNAPSHOT</version>
   <name>Migrator Application - Parent POM</name>
   <packaging>pom</packaging>
   <description>Allow to define migrations at the extension level.</description>

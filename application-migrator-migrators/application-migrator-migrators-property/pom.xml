@@ -25,11 +25,11 @@
   <parent>
     <artifactId>application-migrator-migrators</artifactId>
     <groupId>org.xwiki.contrib</groupId>
-    <version>1.1.8.6-SNAPSHOT</version>
+    <version>1.2.4-SNAPSHOT</version>
   </parent>
   <groupId>org.xwiki.contrib</groupId>
   <artifactId>application-migrator-migrators-property</artifactId>
-  <version>1.1.8.6-SNAPSHOT</version>
+  <version>1.2.4-SNAPSHOT</version>
   <name>Migrator Application - Migrators - Properties- Parent POM</name>
   <description>Module implementing migrations for Properties.</description>
   <packaging>pom</packaging>
