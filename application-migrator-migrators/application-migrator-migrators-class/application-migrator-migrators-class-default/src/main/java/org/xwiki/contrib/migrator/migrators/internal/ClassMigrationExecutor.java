@@ -19,6 +19,7 @@
  */
 package org.xwiki.contrib.migrator.migrators.internal;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import org.xwiki.model.reference.DocumentReferenceResolver;
 import org.xwiki.query.Query;
 import org.xwiki.query.QueryException;
 import org.xwiki.query.QueryManager;
+import org.xwiki.text.StringUtils;
 
 import com.xpn.xwiki.XWiki;
 import com.xpn.xwiki.XWikiContext;
@@ -57,6 +59,13 @@ import com.xpn.xwiki.objects.BaseProperty;
 @InstantiationStrategy(ComponentInstantiationStrategy.PER_LOOKUP)
 public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationDescriptor>
 {
+    /**
+     * Properties coming from the XWiki document itself, that are not stored as XProperties.
+     */
+    private static final List<String> DOCUMENT_PROPERTIES = Arrays.asList(
+        ClassMigrationDescriptor.DOC_CONTENT_MAPPING_PROPERTY,
+        ClassMigrationDescriptor.DOC_TITLE_MAPPING_PROPERTY);
+
     @Inject
     private QueryManager queryManager;
 
@@ -102,11 +111,16 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
         xWikiContext = xWikiContextProvider.get();
         xwiki = xWikiContext.getWiki();
 
-        // Transform some of the parameters tha we got so that we don't need to repeat the operation multiple times
+        // Transform some parameters that we got so that we don't need to repeat the operation multiple times
         oldClassReference = documentReferenceResolver.resolve(migrationParameters.getOldClass());
-        newClassReference = documentReferenceResolver.resolve(migrationParameters.getNewClass());
 
-        if (!xwiki.exists(newClassReference, xWikiContext)) {
+        if (migrationParameters.isInPlace() && migrationParameters.getNewClass().equals(StringUtils.EMPTY)) {
+            newClassReference = oldClassReference;
+        } else {
+            newClassReference = documentReferenceResolver.resolve(migrationParameters.getNewClass());
+        }
+
+        if (!migrationParameters.isInPlace() && !xwiki.exists(newClassReference, xWikiContext)) {
             logger.error("The new class reference does not exists! Aborting ...");
             throw new MigrationException("Failed to migrate the XClasses : the new class does not exist.");
         }
@@ -118,7 +132,8 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
         migrateAllXObjects();
 
         // Step 2 : If needed, remove the old XClass
-        if (migrationParameters.isRemoveOldXClass() && xwiki.exists(oldClassReference, xWikiContext)) {
+        if (!migrationParameters.isInPlace() && migrationParameters.isRemoveOldXClass()
+            && xwiki.exists(oldClassReference, xWikiContext)) {
             try {
                 xwiki.deleteDocument(xwiki.getDocument(oldClassReference, xWikiContext), false, xWikiContext);
             } catch (XWikiException e) {
@@ -141,10 +156,14 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
             Set<String> newProperties =
                     xwiki.getDocument(newClassReference, xWikiContext).getXClass().getPropertyList();
 
+            // Add the document content and title as properties
+            oldProperties.addAll(DOCUMENT_PROPERTIES);
+            newProperties.addAll(DOCUMENT_PROPERTIES);
+
             // Intersect the two properties to get the ones that have a good mapping "by default" as the properties
             // have the same name.
             oldProperties.retainAll(newProperties);
-            oldProperties.stream().forEach(property -> classPropertiesMapping.put(property, property));
+            oldProperties.forEach(property -> classPropertiesMapping.put(property, property));
         } catch (XWikiException e) {
             throw new MigrationException("Failed to construct property mapping of the XClasses.", e);
         }
@@ -192,20 +211,18 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
             List<BaseObject> objects = document.getXObjects(oldClassReference);
 
             for (BaseObject object : objects) {
-                if (object != null) {
+                if (object != null && migrationParameters.isInPlace()) {
+                    logger.debug("Migrating XObject [{}] in place ...", object);
+                    migrateProperties(document, object, object);
+                } else if (object != null) {
                     logger.debug("Migrating XObject [{}], creating XObject with the new XClass ...", object);
-                    document.addXObject(migrateXObject(object));
+                    document.addXObject(migrateXObject(document, object));
                 }
             }
 
             // If asked, we remove the old XObjects
-            if (migrationParameters.isRemoveOldXObjects()) {
-                logger.debug("Removing old XObjects from the document [{}] ...", document.getDocumentReference());
-                for (BaseObject object : objects) {
-                    if (object != null) {
-                        document.removeXObject(object);
-                    }
-                }
+            if (!migrationParameters.isInPlace() && migrationParameters.isRemoveOldXObjects()) {
+                removeOldXObjects(document, objects);
             }
 
             String saveComment = String.format("Migrate objects from XClass [%s] to XClass [%s] "
@@ -224,16 +241,57 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
         }
     }
 
-    private BaseObject migrateXObject(BaseObject oldObject) throws MigrationException
+    private void removeOldXObjects(XWikiDocument document, List<BaseObject> objects)
+    {
+        logger.debug("Removing old XObjects from the document [{}] ...", document.getDocumentReference());
+        for (BaseObject object : objects) {
+            if (object != null) {
+                document.removeXObject(object);
+            }
+        }
+    }
+
+    private BaseObject migrateXObject(XWikiDocument document, BaseObject oldObject) throws MigrationException
     {
         BaseObject newObject = new BaseObject();
         newObject.setXClassReference(newClassReference);
 
-        for (String mappingEntry : classPropertiesMapping.keySet()) {
-            newObject.set(classPropertiesMapping.get(mappingEntry),
-                    ((BaseProperty) oldObject.safeget(mappingEntry)).getValue(), xWikiContext);
-        }
+        migrateProperties(document, oldObject, newObject);
 
         return newObject;
+    }
+
+    private void migrateProperties(XWikiDocument document, BaseObject oldObject, BaseObject newObject)
+        throws MigrationException
+    {
+        for (Map.Entry<String, String> mappingEntry : classPropertiesMapping.entrySet()) {
+            if (!migrationParameters.isInPlace() || !mappingEntry.getKey().equals(mappingEntry.getValue())) {
+
+                // Handle the case where we migrate the document content or the document title from the original object
+                // to the new one
+                Object oldValue;
+                if (mappingEntry.getKey().equals(ClassMigrationDescriptor.DOC_CONTENT_MAPPING_PROPERTY)) {
+                    oldValue = document.getContent();
+                } else if (mappingEntry.getKey().equals(ClassMigrationDescriptor.DOC_TITLE_MAPPING_PROPERTY)) {
+                    oldValue = document.getTitle();
+                } else {
+                    oldValue = ((BaseProperty) oldObject.safeget(mappingEntry.getKey())).getValue();
+                }
+
+                // Handle the case where we migrate the property to the document content or the document title
+                if (DOCUMENT_PROPERTIES.contains(mappingEntry.getValue())) {
+                    if (!(oldValue instanceof String)) {
+                        logger.warn("Not migrating property [{}] to [{}] as the value of the value of the property is"
+                            + " not a string.", mappingEntry.getKey(), mappingEntry.getValue());
+                    } else if (mappingEntry.getValue().equals(ClassMigrationDescriptor.DOC_TITLE_MAPPING_PROPERTY)) {
+                        document.setTitle((String) oldValue);
+                    } else if (mappingEntry.getValue().equals(ClassMigrationDescriptor.DOC_CONTENT_MAPPING_PROPERTY)) {
+                        document.setContent((String) oldValue);
+                    }
+                } else {
+                    newObject.set(mappingEntry.getValue(), oldValue, xWikiContext);
+                }
+            }
+        }
     }
 }

@@ -33,6 +33,16 @@ import org.xwiki.extension.ExtensionId;
 public class ClassMigrationDescriptor extends AbstractMigrationDescriptor<ClassMigrationType>
 {
     /**
+     * Special mapping property to refer to the document content.
+     */
+    public static final String DOC_CONTENT_MAPPING_PROPERTY = "document:content";
+
+    /**
+     * Special mapping property to refer to the document title.
+     */
+    public static final String DOC_TITLE_MAPPING_PROPERTY = "document:title";
+
+    /**
      * Builds a new {@link ClassMigrationDescriptor}.
      *
      * @param extensionId the extension to which this migration applies

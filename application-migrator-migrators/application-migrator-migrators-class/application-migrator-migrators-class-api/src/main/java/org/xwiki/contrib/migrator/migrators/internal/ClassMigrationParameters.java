@@ -31,6 +31,8 @@ import org.xwiki.contrib.migrator.MigrationParameters;
  */
 public class ClassMigrationParameters implements MigrationParameters<ClassMigrationType>
 {
+    private boolean inPlace;
+
     private String oldClass;
 
     private String newClass;
@@ -44,20 +46,30 @@ public class ClassMigrationParameters implements MigrationParameters<ClassMigrat
     /**
      * Constructs a new {@link ClassMigrationParameters}.
      *
+     * @param inPlace whether the migration should be done in place
      * @param oldClass the reference to the old XClass
      * @param newClass the reference to the new XClass
      * @param removeOldXClass should the old XClass be removed?
      * @param removeOldXObjects should the old XObjects be removed?
      * @param propertiesMapping the properties mapping if necessary
      */
-    public ClassMigrationParameters(String oldClass, String newClass, boolean removeOldXClass,
+    public ClassMigrationParameters(boolean inPlace, String oldClass, String newClass, boolean removeOldXClass,
             boolean removeOldXObjects, Map<String, String> propertiesMapping)
     {
+        this.inPlace = inPlace;
         this.oldClass = oldClass;
         this.newClass = newClass;
         this.removeOldXClass = removeOldXClass;
         this.removeOldXObjects = removeOldXObjects;
         this.propertiesMapping = propertiesMapping;
+    }
+
+    /**
+     * @return whether the migration should be done in place (on the same XClass)
+     */
+    public boolean isInPlace()
+    {
+        return inPlace;
     }
 
     /**

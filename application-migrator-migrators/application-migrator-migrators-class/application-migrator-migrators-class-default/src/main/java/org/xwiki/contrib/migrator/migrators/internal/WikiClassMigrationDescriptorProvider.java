@@ -57,6 +57,7 @@ public class WikiClassMigrationDescriptorProvider extends AbstractWikiMigrationD
 
 
         ClassMigrationParameters migrationParameters = new ClassMigrationParameters(
+                (object.getIntValue(ClassMigrationClassDocumentInitializer.IN_PLACE_PROPERTY, 0) == 1),
                 object.getStringValue(ClassMigrationClassDocumentInitializer.OLD_CLASS_PROPERTY),
                 object.getStringValue(ClassMigrationClassDocumentInitializer.NEW_CLASS_PROPERTY),
                 (object.getIntValue(ClassMigrationClassDocumentInitializer.REMOVE_OLD_XCLASS_PROPERTY, 0) == 1),

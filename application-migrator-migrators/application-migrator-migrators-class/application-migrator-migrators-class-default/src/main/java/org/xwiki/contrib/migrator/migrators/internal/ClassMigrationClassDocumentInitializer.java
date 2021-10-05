@@ -54,6 +54,11 @@ public class ClassMigrationClassDocumentInitializer extends AbstractMigrationCla
     public static final String CLASS_REFERENCE = String.format("Migrator.Migrators.%s", CLASS_NAME);
 
     /**
+     * Whether the migration should be done in place.
+     */
+    public static final String IN_PLACE_PROPERTY = "inPlace";
+
+    /**
      * The reference of the old class to target.
      */
     public static final String OLD_CLASS_PROPERTY = "oldClass";
@@ -93,6 +98,8 @@ public class ClassMigrationClassDocumentInitializer extends AbstractMigrationCla
     @Override
     protected void appendClassProperties(BaseClass xclass)
     {
+        xclass.addBooleanField(IN_PLACE_PROPERTY, "Is the migration on the same XClass ?", CHECKBOX_DISPLAY);
+
         xclass.addTextField(OLD_CLASS_PROPERTY, "Old XClass reference", 128);
         xclass.addTextField(NEW_CLASS_PROPERTY, "New XClass reference", 128);
 
