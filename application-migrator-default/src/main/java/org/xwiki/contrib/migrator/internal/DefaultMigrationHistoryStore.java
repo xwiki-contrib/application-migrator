@@ -139,6 +139,7 @@ public class DefaultMigrationHistoryStore implements MigrationHistoryStore
                     // Actually set the object value and save the document.
                     migrationObject.set(MigrationHistoryClassDocumentInitializer.UUID_PROPERTY,
                             migrationUUID, xContext);
+                    document.setHidden(true);
                     xWiki.saveDocument(document, String.format("Add migration [%s].", migrationUUID), xContext);
                 } else {
                     throw new MigrationException(String.format("Failed to create the XObject [%s] on document [%s]",
