@@ -25,10 +25,10 @@
   <parent>
     <groupId>org.xwiki.contrib</groupId>
     <artifactId>application-migrator-migrators</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
   </parent>
   <artifactId>application-migrator-migrators-default</artifactId>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1</version>
   <name>Migrator Application - Migrators - Default Bridge</name>
   <description>Set of diverse interfaces and abstracts to help the creation of new migrators.</description>
   <dependencies>
