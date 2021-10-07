@@ -28,7 +28,7 @@
     <version>9.11-5</version>
   </parent>
   <artifactId>application-migrator</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.1.1</version>
   <name>Migrator Application - Parent POM</name>
   <packaging>pom</packaging>
   <description>Allow to define migrations at the extension level.</description>
@@ -36,7 +36,7 @@
     <connection>scm:git:git://github.com/xwiki-contrib/application-migrator.git</connection>
     <developerConnection>scm:git:git@github.com:xwiki-contrib/application-migrator.git</developerConnection>
     <url>https://github.com/xwiki-contrib/application-migrator/tree/master</url>
-    <tag>HEAD</tag>
+    <tag>application-migrator-1.1.1</tag>
   </scm>
   <developers>
     <developer>
