@@ -21,6 +21,7 @@ package org.xwiki.contrib.migrator.migrators.internal;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -152,9 +153,9 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
             // Here again, three steps
             // Step 1 : Get the current structures of the two XClasses
             Set<String> oldProperties =
-                    xwiki.getDocument(oldClassReference, xWikiContext).getXClass().getPropertyList();
+                new HashSet<>(xwiki.getDocument(oldClassReference, xWikiContext).getXClass().getPropertyList());
             Set<String> newProperties =
-                    xwiki.getDocument(newClassReference, xWikiContext).getXClass().getPropertyList();
+                new HashSet<>(xwiki.getDocument(newClassReference, xWikiContext).getXClass().getPropertyList());
 
             // Add the document content and title as properties
             oldProperties.addAll(DOCUMENT_PROPERTIES);
@@ -225,19 +226,7 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
                 removeOldXObjects(document, objects);
             }
 
-            String saveComment = String.format("Migrate objects from XClass [%s] to XClass [%s] "
-                            + "as part of the migration \"%s\" (%s)",
-                    migrationParameters.getOldClass(),
-                    migrationParameters.getNewClass(),
-                    migrationDescriptor.getMigrationName(),
-                    migrationDescriptor.getMigrationUUID());
-
-            try {
-                xwiki.saveDocument(document, saveComment, xWikiContext);
-            } catch (XWikiException e) {
-                throw new MigrationException(String.format("Failed to save migrated document [%s]",
-                        document.getDocumentReference()), e);
-            }
+            saveDocmuent(document);
         }
     }
 
@@ -292,6 +281,33 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
                     newObject.set(mappingEntry.getValue(), oldValue, xWikiContext);
                 }
             }
+        }
+    }
+
+    private void saveDocmuent(XWikiDocument document) throws MigrationException
+    {
+        String saveComment;
+        if (StringUtils.isNotBlank(migrationParameters.getSaveComment())) {
+            saveComment = migrationParameters.getSaveComment();
+        } else {
+            saveComment = String.format("Migrate objects from XClass [%s] to XClass [%s] "
+                    + "as part of the migration \"%s\" (%s)",
+                migrationParameters.getOldClass(),
+                migrationParameters.getNewClass(),
+                migrationDescriptor.getMigrationName(),
+                migrationDescriptor.getMigrationUUID());
+        }
+
+        try {
+            if (!migrationParameters.isCreateNewVersion()) {
+                document.setContentDirty(false);
+                document.setMetaDataDirty(false);
+            }
+
+            xwiki.saveDocument(document, saveComment, xWikiContext);
+        } catch (XWikiException e) {
+            throw new MigrationException(String.format("Failed to save migrated document [%s]",
+                document.getDocumentReference()), e);
         }
     }
 }

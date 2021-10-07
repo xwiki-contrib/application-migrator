@@ -83,6 +83,16 @@ public class ClassMigrationClassDocumentInitializer extends AbstractMigrationCla
      */
     public static final String PROPERTIES_MAPPING_PROPERTY = "propertiesMapping";
 
+    /**
+     * Save comment.
+     */
+    public static final String SAVE_COMMENT_PROPERTY = "saveComment";
+
+    /**
+     * Should a new version of the document be created in the history ?
+     */
+    public static final String CREATE_NEW_VERSION_PROPERTY = "createNewVersion";
+
     private static final List<String> SPACE_PATH = Arrays.asList("Migrator", "Migrators");
 
     private static final String CHECKBOX_DISPLAY = "checkbox";
@@ -108,5 +118,8 @@ public class ClassMigrationClassDocumentInitializer extends AbstractMigrationCla
 
         xclass.addTextAreaField(PROPERTIES_MAPPING_PROPERTY, "Properties mapping", 120, 20,
                 TextAreaClass.EditorType.PURE_TEXT);
+
+        xclass.addTextField(SAVE_COMMENT_PROPERTY, "Save comment", 256);
+        xclass.addBooleanField(CREATE_NEW_VERSION_PROPERTY, "Create a new document version ?", CHECKBOX_DISPLAY, true);
     }
 }

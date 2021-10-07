@@ -65,6 +65,10 @@ public class WikiClassMigrationDescriptorProvider extends AbstractWikiMigrationD
                 extractMapping(
                         object.getStringValue(ClassMigrationClassDocumentInitializer.PROPERTIES_MAPPING_PROPERTY)));
 
+        migrationParameters.setSaveParameters(
+            object.getStringValue(ClassMigrationClassDocumentInitializer.SAVE_COMMENT_PROPERTY),
+            (object.getIntValue(ClassMigrationClassDocumentInitializer.CREATE_NEW_VERSION_PROPERTY, 0) == 1));
+
         return new ClassMigrationDescriptor(
                 extensionId,
                 object.getStringValue(ClassMigrationClassDocumentInitializer.MIGRATION_NAME_PROPERTY),

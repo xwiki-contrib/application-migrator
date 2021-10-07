@@ -43,6 +43,10 @@ public class ClassMigrationParameters implements MigrationParameters<ClassMigrat
 
     private Map<String, String> propertiesMapping;
 
+    private String saveComment;
+
+    private boolean createNewVersion;
+
     /**
      * Constructs a new {@link ClassMigrationParameters}.
      *
@@ -62,6 +66,16 @@ public class ClassMigrationParameters implements MigrationParameters<ClassMigrat
         this.removeOldXClass = removeOldXClass;
         this.removeOldXObjects = removeOldXObjects;
         this.propertiesMapping = propertiesMapping;
+    }
+
+    /**
+     * @param saveComment the save comment
+     * @param createNewVersion whether the document should be updated
+     */
+    public void setSaveParameters(String saveComment, boolean createNewVersion)
+    {
+        this.saveComment = saveComment;
+        this.createNewVersion = createNewVersion;
     }
 
     /**
@@ -110,5 +124,21 @@ public class ClassMigrationParameters implements MigrationParameters<ClassMigrat
     public Map<String, String> getPropertiesMapping()
     {
         return propertiesMapping;
+    }
+
+    /**
+     * @return the save comment to be used when saving the glossary entry
+     */
+    public String getSaveComment()
+    {
+        return saveComment;
+    }
+
+    /**
+     * @return true if the document should be updated (if a new entry should be created in the document history)
+     */
+    public boolean isCreateNewVersion()
+    {
+        return createNewVersion;
     }
 }
