@@ -83,7 +83,10 @@ public abstract class AbstractWikiMigrationDescriptorProvider implements Migrati
                     XWikiDocument document = xwiki.getDocument(documentReference, context);
 
                     for (BaseObject object : document.getXObjects(classReference)) {
-                        resultSet.add(createFromBaseObject(object));
+                        AbstractMigrationDescriptor abstractMigrationDescriptor = createFromBaseObject(object);
+                        if (extensionId.getId().equals(abstractMigrationDescriptor.getExtensionId().getId())) {
+                            resultSet.add(abstractMigrationDescriptor);
+                        }
                     }
                 }
             } catch (XWikiException e) {

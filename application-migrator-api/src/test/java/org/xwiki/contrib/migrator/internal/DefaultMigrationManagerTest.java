@@ -22,7 +22,6 @@ package org.xwiki.contrib.migrator.internal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
-import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -83,7 +82,7 @@ public class DefaultMigrationManagerTest
         // By default, the migration history store will always return no migrations, this can be easily
         // overridden if needed to perform some tests
         migrationHistoryStore = mocker.registerMockComponent(MigrationHistoryStore.class);
-        when(migrationHistoryStore.getAppliedMigrationsForVersion(any(ExtensionId.class))).thenReturn(
+        when(migrationHistoryStore.getAppliedMigrationsForExtensionId(any(ExtensionId.class))).thenReturn(
                 Collections.EMPTY_SET);
 
         // We register by default two descriptor providers that can be then mocked to provide dummy migrations
@@ -171,7 +170,7 @@ public class DefaultMigrationManagerTest
                 appliedDescriptor2
         );
 
-        when(migrationHistoryStore.getAppliedMigrationsForVersion(dummyExtensionId)).thenReturn(appliedDescriptors);
+        when(migrationHistoryStore.getAppliedMigrationsForExtensionId(dummyExtensionId)).thenReturn(appliedDescriptors);
         when(migrationDescriptorProvider1.getMigrations(dummyExtensionId)).thenReturn(descriptorsForProvider1);
         when(migrationDescriptorProvider2.getMigrations(dummyExtensionId)).thenReturn(descriptorsForProvider2);
 

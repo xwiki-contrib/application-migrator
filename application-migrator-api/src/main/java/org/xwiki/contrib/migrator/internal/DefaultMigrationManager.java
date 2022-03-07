@@ -95,7 +95,8 @@ public class DefaultMigrationManager implements MigrationManager
         }
 
         // Remove every migration that has already been applied according to the migration history store
-        Set<String> appliedMigrations = migrationHistoryStoreProvider.get().getAppliedMigrationsForVersion(extensionId);
+        Set<String> appliedMigrations = migrationHistoryStoreProvider.get()
+            .getAppliedMigrationsForExtensionId(extensionId);
         availableMigrations = availableMigrations.stream()
                 .filter(x -> !appliedMigrations.contains(x.getMigrationUUID())).collect(Collectors.toSet());
 

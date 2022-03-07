@@ -38,6 +38,7 @@ import org.xwiki.extension.ExtensionId;
 import org.xwiki.model.reference.DocumentReference;
 import org.xwiki.model.reference.DocumentReferenceResolver;
 import org.xwiki.model.reference.EntityReferenceSerializer;
+import org.xwiki.model.reference.SpaceReference;
 import org.xwiki.query.Query;
 import org.xwiki.query.QueryException;
 import org.xwiki.query.QueryManager;
@@ -91,19 +92,23 @@ public class DefaultMigrationHistoryStore implements MigrationHistoryStore
     private EntityReferenceSerializer<String> localStringEntityReferenceSerializer;
 
     @Override
-    public Set<String> getAppliedMigrationsForVersion(ExtensionId extensionId) throws MigrationException
+    public Set<String> getAppliedMigrationsForExtensionId(ExtensionId extensionId) throws MigrationException
     {
         Set<String> resultSet = new HashSet<>();
 
         if (extensionId.getVersion() != null && extensionId.getId() != null && !extensionId.getId().isEmpty()) {
+            SpaceReference extensionSpaceReference = new SpaceReference(
+                xWikiContextProvider.get().getWikiId(),
+                Arrays.asList(MIGRATOR_SPACE_NAME, STORE_SPACE_NAME, extensionId.getId()));
             try {
                 Query query = queryManager.createQuery(
                         "select uuid.value from BaseObject obj, StringProperty uuid "
-                                + "where obj.name = :doc and obj.className = :class and uuid.id.id = obj.id "
+                                + "where obj.name like :doc and obj.className = :class and uuid.id.id = obj.id "
                                 + "and uuid.id.name = :uuid ", Query.HQL);
 
-                query.bindValue("doc", String.format("%s",
-                        localStringEntityReferenceSerializer.serialize(buildDocumentReference(extensionId))));
+                query.bindValue("doc", String.format("%s.%%",
+                        localStringEntityReferenceSerializer.serialize(extensionSpaceReference)
+                            .replaceAll("\\\\", "%\\\\")));
                 query.bindValue("class", MigrationHistoryClassDocumentInitializer.CLASS_REFERENCE);
                 query.bindValue("uuid", MigrationHistoryClassDocumentInitializer.UUID_PROPERTY);
                 List<String> results = query.execute();

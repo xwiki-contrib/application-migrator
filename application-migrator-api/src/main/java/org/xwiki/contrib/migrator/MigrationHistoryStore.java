@@ -47,7 +47,7 @@ public interface MigrationHistoryStore
      * @return a set of applied migrations UUIDs for the corresponding version of the extension
      * @throws MigrationException if an error happens
      */
-    Set<String> getAppliedMigrationsForVersion(ExtensionId extensionId) throws MigrationException;
+    Set<String> getAppliedMigrationsForExtensionId(ExtensionId extensionId) throws MigrationException;
 
     /**
      * Declare a new migration applied on the wiki.

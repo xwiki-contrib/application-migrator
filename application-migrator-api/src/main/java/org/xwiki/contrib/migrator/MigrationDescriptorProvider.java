@@ -36,6 +36,8 @@ public interface MigrationDescriptorProvider
     /**
      * For the given extension ID, get a set of migration descriptors that are waiting to be applied.
      *
+     * Note that only the id of the extension will be checked, the version of the extension does not matter.
+     *
      * @param extensionId the extension that should be used
      * @throws MigrationException if an error happens
      * @return a set of migration descriptors
