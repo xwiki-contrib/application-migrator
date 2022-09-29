@@ -21,10 +21,10 @@ package org.xwiki.contrib.migrator.migrators.internal;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -49,6 +49,9 @@ import com.xpn.xwiki.XWikiException;
 import com.xpn.xwiki.doc.XWikiDocument;
 import com.xpn.xwiki.objects.BaseObject;
 import com.xpn.xwiki.objects.BaseProperty;
+import com.xpn.xwiki.objects.classes.BaseClass;
+import com.xpn.xwiki.objects.classes.ComputedFieldClass;
+import com.xpn.xwiki.objects.meta.ComputedFieldMetaClass;
 
 /**
  * Executes migrations of type {@link ClassMigrationType}.
@@ -152,14 +155,16 @@ public class ClassMigrationExecutor implements MigrationExecutor<ClassMigrationD
         try {
             // Here again, three steps
             // Step 1 : Get the current structures of the two XClasses
-            Set<String> oldProperties =
-                new HashSet<>(xwiki.getDocument(oldClassReference, xWikiContext).getXClass().getPropertyList());
-            Set<String> newProperties =
-                new HashSet<>(xwiki.getDocument(newClassReference, xWikiContext).getXClass().getPropertyList());
-
-            // Add the document content and title as properties
-            oldProperties.addAll(DOCUMENT_PROPERTIES);
-            newProperties.addAll(DOCUMENT_PROPERTIES);
+            BaseClass oldClass = xwiki.getDocument(oldClassReference, xWikiContext).getXClass();
+            Set<String> oldProperties = oldClass.getPropertyList().stream()
+                .filter(property ->
+                    !(oldClass.getField(property) instanceof ComputedFieldClass
+                        || oldClass.getField(property) instanceof ComputedFieldMetaClass)).collect(Collectors.toSet());
+            BaseClass newClass = xwiki.getDocument(newClassReference, xWikiContext).getXClass();
+            Set<String> newProperties = newClass.getPropertyList().stream()
+                .filter(property ->
+                    !(newClass.getField(property) instanceof ComputedFieldClass
+                        || newClass.getField(property) instanceof ComputedFieldMetaClass)).collect(Collectors.toSet());
 
             // Intersect the two properties to get the ones that have a good mapping "by default" as the properties
             // have the same name.
